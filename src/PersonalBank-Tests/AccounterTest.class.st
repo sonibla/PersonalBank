@@ -42,6 +42,34 @@ AccounterTest >> testAddOperation [
 ]
 
 { #category : #tests }
+AccounterTest >> testAddOperations [
+
+	| newOperations |
+	newOperations := { 
+		                 (IncomeOperation
+			                  on: (Date newDay: 03 month: 01 year: 2000)
+			                  change: 'Source2' -> 13 -> 'Destination2'
+			                  bank: 'Bank2').
+		                 (IncomeOperation
+			                  on: (Date newDay: 03 month: 01 year: 2000)
+			                  change: 'Source2' -> 13 -> 'Destination2'
+			                  bank: 'Bank3').
+		                 (IncomeOperation
+			                  on: (Date newDay: 03 month: 01 year: 2000)
+			                  change: 'Source2' -> 13 -> 'Destination2'
+			                  bank: 'Bank4') }.
+
+	self
+		assert: self dummyAccounter operations asArray
+		equals: self dummyOperations.
+
+	self dummyAccounter addOperations: newOperations.
+	self
+		assert: self dummyAccounter operations asArray
+		equals: self dummyOperations copy , newOperations
+]
+
+{ #category : #tests }
 AccounterTest >> testEquals [
 
 	self
