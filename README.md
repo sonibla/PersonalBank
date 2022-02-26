@@ -13,6 +13,12 @@ This app runs on [Pharo](https://pharo.org/) 10.
 
 Once in Pharo, evaluate:
 ```
+[Metacello new
+    baseline: 'Roassal3';
+    repository: 'github://ObjectProfile/Roassal3';
+    load: 'Full' ] on: MCMergeOrLoadWarning do: [:warning | warning load ]
+```
+```
 Metacello new
     baseline: 'PersonalBank';
     repository: 'github://sonibla/PersonalBank';
