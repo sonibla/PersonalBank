@@ -219,7 +219,8 @@ AccounterSynchronizer >> unsavedChanges: anObject [
 AccounterSynchronizer >> update: aSymbol [
 
 	aSymbol = #operations ifTrue: [ 
-		self unsavedChanges: self fileIsCorrectlySync not.
-		self shouldAutoSave ifTrue: [ self saveOnFile: self filename ] ].
-	aSymbol = #statistics ifTrue: [ self changed: #statistics ]
+		self unsavedChanges: self fileIsCorrectlySync not ].
+	aSymbol = #statistics ifTrue: [ 
+		self shouldAutoSave ifTrue: [ self saveOnFile: self filename ].
+		self changed: #statistics ]
 ]
