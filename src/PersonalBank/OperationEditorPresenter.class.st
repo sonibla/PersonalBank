@@ -253,20 +253,20 @@ OperationEditorPresenter >> operationTableContextMenu [
 		  addItem: (self
 				   contextMenuItemNamed: 'Delete'
 				   iconNamed: #delete
-				   action: [ :toRemove | 
-					   self removeOperations: toRemove askingForConfirmation: true ]);
+				   action: [ :collection | 
+					   self removeOperations: collection askingForConfirmation: true ]);
 		  addItem: (self
 				   contextMenuItemNamed: 'Copy'
 				   iconNamed: #smallCopy
-				   action: [ :toCopy | self copyOperations: toCopy ]);
+				   action: [ :collection | self copyOperations: collection ]);
 		  addItem: (self
 				   contextMenuItemNamed: 'Push up'
 				   iconNamed: #up
-				   action: [ :toCopy | self pushUpOperations: toCopy ]);
+				   action: [ :collection | self pushUpOperations: collection ]);
 		  addItem: (self
 				   contextMenuItemNamed: 'Pull down'
 				   iconNamed: #down
-				   action: [ :toCopy | self pullDownOperations: toCopy ])
+				   action: [ :collection | self pullDownOperations: collection ])
 ]
 
 { #category : #accessing }
@@ -336,6 +336,12 @@ OperationEditorPresenter >> setAccounter: anAccounter [
 	self update: #operations
 ]
 
+{ #category : #updating }
+OperationEditorPresenter >> sortedOperations [
+
+	^ self operationList copy reversed sorted: [ :a :b | a date < b date ]
+]
+
 { #category : #accessing }
 OperationEditorPresenter >> source [
 
@@ -400,8 +406,7 @@ OperationEditorPresenter >> update: aSymbol [
 { #category : #updating }
 OperationEditorPresenter >> updateTable [
 
-	operationsTable model collection:
-		(self operationList copy reversed sorted: [ :a :b | a date < b date ]).
+	operationsTable model collection: self sortedOperations.
 	operationsTable refresh
 ]
 
