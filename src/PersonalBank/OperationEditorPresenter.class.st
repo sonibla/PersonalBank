@@ -112,7 +112,9 @@ OperationEditorPresenter >> contextMenuItemNamed: name iconNamed: iconName actio
 		  iconName: iconName;
 		  action: [ 
 			  | selectedOperations |
-			  selectedOperations := operationsTable selectedItems.
+			  selectedOperations := self sortedOperations select: [ :each | 
+					                        operationsTable selectedItems 
+						                        identityIncludes: each ].
 			  self unselectAll.
 			  aBlock value: selectedOperations.
 			  self updateTable ] ]
