@@ -51,7 +51,7 @@ AccounterProcessor class >> sortedOperationsFromAccounter: anAccounter [
 
 	| groupedByDate |
 	groupedByDate := anAccounter operationsGroupedByDate.
-	^ groupedByDate keysSortedSafely flatCollect: [ :eachDate | 
+	^ groupedByDate keys sorted flatCollect: [ :eachDate | 
 		  self operationsSafelySorted:
 			  (anAccounter operationsDated: eachDate) ]
 ]
