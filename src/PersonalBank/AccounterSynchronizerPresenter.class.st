@@ -197,10 +197,7 @@ AccounterSynchronizerPresenter >> openDialogToOpenExistingFile [
 { #category : #query }
 AccounterSynchronizerPresenter >> sanityIssues [
 
-	^ self accounter bankAndBudgetsEqualCapitals not or: [ 
-		  self accounter negativeCapitals or: [ 
-			  self accounter partialSplits or: [ 
-				  self accounter duplicatedNames ] ] ]
+	^ self accounter sanityIssues
 ]
 
 { #category : #query }

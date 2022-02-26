@@ -97,7 +97,7 @@ AccounterSynchronizer >> autosave: anObject [
 	autosave ifTrue: [ self save ].
 ]
 
-{ #category : #testing }
+{ #category : #query }
 AccounterSynchronizer >> fileIsCorrectlySync [
 
 	^ self synchronizedWithFilename: self filename
@@ -173,7 +173,16 @@ AccounterSynchronizer >> setAccounter: anAccounter [
 	self changed: #statistics.
 ]
 
-{ #category : #testing }
+{ #category : #query }
+AccounterSynchronizer >> shouldAutoSave [
+
+	^ self autosave and: [ 
+		  self filename isNotEmpty and: [ 
+			  self accounter sanityIssues not and: [ 
+				  self accounter errorWhileProcessing isNil ] ] ]
+]
+
+{ #category : #query }
 AccounterSynchronizer >> synchronizedWithFile: aFile [
 
 	^ aFile exists and: [ 
@@ -181,7 +190,7 @@ AccounterSynchronizer >> synchronizedWithFile: aFile [
 		  = self accounter operations ]
 ]
 
-{ #category : #testing }
+{ #category : #query }
 AccounterSynchronizer >> synchronizedWithFilename: aString [
 
 	^ aString isString
@@ -211,7 +220,6 @@ AccounterSynchronizer >> update: aSymbol [
 
 	aSymbol = #operations ifTrue: [ 
 		self unsavedChanges: self fileIsCorrectlySync not.
-		(self autosave and: [ self filename isNotEmpty ]) ifTrue: [ 
-			self saveOnFile: self filename ] ].
+		self shouldAutoSave ifTrue: [ self saveOnFile: self filename ] ].
 	aSymbol = #statistics ifTrue: [ self changed: #statistics ]
 ]

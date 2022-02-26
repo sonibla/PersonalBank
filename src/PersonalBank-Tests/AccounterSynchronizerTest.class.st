@@ -24,7 +24,7 @@ AccounterSynchronizerTest >> testAutosave [
 
 	self dummyAccounterSynchronizer filename: self filenameForTesting.
 	self dummyAccounterSynchronizer accounter addOperation:
-		(self dummyOutcomeOf: 1).
+		(self dummyIncomeOf: 1).
 	self assert: self dummyAccounterSynchronizer unsavedChanges.
 	self dummyAccounterSynchronizer autosave: true.
 	self deny: self dummyAccounterSynchronizer unsavedChanges.
@@ -35,7 +35,7 @@ AccounterSynchronizerTest >> testAutosave [
 		equals: self dummyAccounterSynchronizer accounter.
 
 	self dummyAccounterSynchronizer accounter addOperation:
-		(self dummyOutcomeOf: 2).
+		(self dummyIncomeOf: 2).
 	self deny: self dummyAccounterSynchronizer unsavedChanges.
 	self
 		assert:
@@ -232,6 +232,22 @@ AccounterSynchronizerTest >> testSaveEmptyAccounter [
 	self
 		assert: self dummyAccounterSynchronizer accounter
 		equals: Accounter new
+]
+
+{ #category : #'tests - file sync' }
+AccounterSynchronizerTest >> testShouldNotAutosaveInCaseOfSanityIssue [
+
+	self dummyAccounterSynchronizer autosave: true.
+	self dummyAccounterSynchronizer filename: self filenameForTesting.
+	self dummyAccounterSynchronizer accounter
+		addOperation: (BudgetTransferOperation
+				 on: (Date newDay: 9 month: 1 year: 2000)
+				 change: 'Budget2' -> 500 -> 'Budget2bis');
+		addOperation: (BudgetTransferOperation
+				 on: (Date newDay: 9 month: 1 year: 2000)
+				 change: 'Budget1' -> 500 -> 'Budget2bis').
+	self assert: self dummyAccounterSynchronizer accounter sanityIssues.
+	self assert: self dummyAccounterSynchronizer unsavedChanges
 ]
 
 { #category : #'tests - converting' }

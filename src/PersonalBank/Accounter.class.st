@@ -211,6 +211,14 @@ Accounter >> removeOperations: aCollection [
 	self changed: #operations
 ]
 
+{ #category : #testing }
+Accounter >> sanityIssues [
+
+	^ self bankAndBudgetsEqualCapitals not or: [ 
+		  self negativeCapitals or: [ 
+			  self partialSplits or: [ self duplicatedNames ] ] ]
+]
+
 { #category : #initialization }
 Accounter >> setOperations: aCollection [
 
