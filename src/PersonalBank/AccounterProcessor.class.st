@@ -144,9 +144,11 @@ AccounterProcessor >> generateBudgetCapitalDiagram [
 
 	| sankey |
 	sankey := RSSankey withAllAssociations:
-		          (budgets recursiveSubcontainersWithoutSelf flatCollect: [ 
-			           :each | 
-			           each subcontainers collect: [ :eachSub | 
+		          ((budgets recursiveSubcontainersWithoutSelf reject: [ :e | 
+			            e roundedTotal isZero ]) flatCollect: [ :each | 
+			           each subcontainers
+				           reject: [ :e | e roundedTotal isZero ]
+				           thenCollect: [ :eachSub | 
 				           each name -> eachSub roundedTotal -> eachSub name ] ])
 		          , (budgets subcontainers collect: [ :each | 
 				           'Total' -> each roundedTotal -> each name ]).
