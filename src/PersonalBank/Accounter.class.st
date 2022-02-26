@@ -26,9 +26,22 @@ Accounter >> = anAccounter [
 { #category : #actions }
 Accounter >> addOperation: anOperation [
 
+	self addOperations: { anOperation }
+]
+
+{ #category : #actions }
+Accounter >> addOperation: anOperation notifying: shouldNotify [
+
 	(self includesOperation: anOperation) ifFalse: [ 
 		anOperation addDependent: self.
-		operations add: anOperation ].
+		operations add: anOperation.
+		shouldNotify ifTrue: [ self changed: #operations ] ]
+]
+
+{ #category : #actions }
+Accounter >> addOperations: aCollection [
+
+	aCollection do: [ :each | self addOperation: each notifying: false ].
 	self changed: #operations
 ]
 

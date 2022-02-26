@@ -57,6 +57,12 @@ OperationEditorPresenter >> addOperation: anOperation [
 	accounter addOperation: anOperation
 ]
 
+{ #category : #actions }
+OperationEditorPresenter >> addOperations: aCollection [
+
+	accounter addOperations: aCollection
+]
+
 { #category : #accessing }
 OperationEditorPresenter >> amount [
 
@@ -120,7 +126,7 @@ OperationEditorPresenter >> copyOperations: aCollection [
 		        each copy
 			        date: Date today;
 			        yourself ].
-	copy do: [ :each | self addOperation: each ].
+	self addOperations: copy.
 
 	self selectItems: copy
 ]
