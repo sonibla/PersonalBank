@@ -20,8 +20,8 @@ Class {
 	#category : #'PersonalBank-GUI'
 }
 
-{ #category : #specs }
-AccounterSynchronizerPresenter class >> defaultSpec [
+{ #category : #layout }
+AccounterSynchronizerPresenter class >> defaultLayout [
 
 	^ SpBoxLayout newLeftToRight
 		  add: #toolBar expand: false;

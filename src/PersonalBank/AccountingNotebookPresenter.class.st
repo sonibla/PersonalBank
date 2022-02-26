@@ -11,8 +11,8 @@ Class {
 	#category : #'PersonalBank-GUI'
 }
 
-{ #category : #specs }
-AccountingNotebookPresenter class >> defaultSpec [
+{ #category : #layout }
+AccountingNotebookPresenter class >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: #synchronizerPresenter expand: false;

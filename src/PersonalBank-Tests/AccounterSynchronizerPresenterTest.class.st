@@ -16,7 +16,7 @@ AccounterSynchronizerPresenterTest >> setUp [
 	presenter := AccounterSynchronizerPresenter new 
 		             setAccounterSynchronizer:
 		             self dummyAccounterSynchronizer.
-	window := presenter openWithSpec
+	window := presenter open
 ]
 
 { #category : #running }

@@ -9,8 +9,8 @@ Class {
 	#category : #'PersonalBank-GUI'
 }
 
-{ #category : #specs }
-CapitalDiagramPresenter class >> defaultSpec [
+{ #category : #layout }
+CapitalDiagramPresenter class >> defaultLayout [
 
 	^ SpPanedLayout newLeftToRight
 		  positionOfSlider: 0.7;

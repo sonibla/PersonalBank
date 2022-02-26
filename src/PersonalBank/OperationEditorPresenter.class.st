@@ -27,8 +27,8 @@ OperationEditorPresenter class >> dateWidth [
 	^ 80
 ]
 
-{ #category : #specs }
-OperationEditorPresenter class >> defaultSpec [
+{ #category : #layout }
+OperationEditorPresenter class >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
 		  add: #operationsTable;
@@ -178,7 +178,7 @@ OperationEditorPresenter >> instanciateOperationEditor [
 
 	type := self newDropList
 		        items: OperationType possibleTypes;
-		        iconBlock: [ :eachType | eachType icon ].
+		        displayIcon: [ :eachType | eachType icon ].
 	source := self newTextInput placeholder: 'Source'.
 	date := self newTextInput placeholder: 'Date'.
 	destination := self newTextInput placeholder: 'Destination'.

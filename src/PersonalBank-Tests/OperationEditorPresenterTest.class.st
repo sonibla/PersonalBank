@@ -33,7 +33,7 @@ OperationEditorPresenterTest >> setUp [
 	super setUp.
 	presenter := OperationEditorPresenter new setAccounter:
 		             self accounter.
-	window := presenter openWithSpec
+	window := presenter open
 ]
 
 { #category : #running }
