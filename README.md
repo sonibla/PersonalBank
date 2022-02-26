@@ -29,7 +29,7 @@ Metacello new
 
 Evaluate:
 ```
-AccountingNotebookPresenter new openWithSpec
+AccountingNotebookPresenter new open
 ```
 Then discover. Maybe my UI should need explanations, maybe not, idk (I did this app for myself so I made it intuitive for me, without following any UI/UX guidelines)
 
