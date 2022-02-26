@@ -37,22 +37,6 @@ AccounterSynchronizerPresenterTest >> testAutosaveButton [
 ]
 
 { #category : #running }
-AccounterSynchronizerPresenterTest >> testDeleteButton [
-
-	self
-		deny: self dummyAccounterSynchronizer accounter
-		equals: Accounter new.
-	self dummyAccounterSynchronizer filename: self filenameForTesting.
-
-	presenter deleteButton click.
-
-	self
-		assert: self dummyAccounterSynchronizer accounter
-		equals: Accounter new.
-	self assert: presenter filenameLabel text equals: ''
-]
-
-{ #category : #running }
 AccounterSynchronizerPresenterTest >> testFilenameLabel [
 
 	self assert: presenter filenameLabel text equals: ''.
