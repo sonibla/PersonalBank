@@ -84,6 +84,21 @@ OperationEditorPresenterTest >> testAddOperations [
 ]
 
 { #category : #tests }
+OperationEditorPresenterTest >> testCopyOperations [
+
+	| operationsToCopy |
+	self fillAccounterWithOperations.
+	operationsToCopy := (self dummyOperations last: 2) copy.
+	presenter unselectAll.
+	presenter selectItems: operationsToCopy.
+	presenter copyOperations: operationsToCopy keepingOriginalDate: true.
+
+	self
+		assert: self accounter operations asArray
+		equals: self dummyOperations , operationsToCopy
+]
+
+{ #category : #tests }
 OperationEditorPresenterTest >> testEditOperationAfterAccounterReset [
 
 	self fillAccounterWithOperations.

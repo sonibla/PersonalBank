@@ -119,12 +119,14 @@ OperationEditorPresenter >> contextMenuItemNamed: name iconNamed: iconName actio
 ]
 
 { #category : #actions }
-OperationEditorPresenter >> copyOperations: aCollection [
+OperationEditorPresenter >> copyOperations: aCollection keepingOriginalDate: shouldCopyDate [
 
 	| copy |
 	copy := aCollection collect: [ :each | 
 		        each copy
-			        date: Date today;
+			        date: (shouldCopyDate
+					         ifTrue: [ each date ]
+					         ifFalse: [ Date today ]);
 			        yourself ].
 	self addOperations: copy.
 
@@ -258,7 +260,13 @@ OperationEditorPresenter >> operationTableContextMenu [
 		  addItem: (self
 				   contextMenuItemNamed: 'Copy'
 				   iconNamed: #smallCopy
-				   action: [ :collection | self copyOperations: collection ]);
+				   action: [ :collection | 
+					   self copyOperations: collection keepingOriginalDate: true ]);
+		  addItem: (self
+				   contextMenuItemNamed: 'Copy today'
+				   iconNamed: #smallCopy
+				   action: [ :collection | 
+					   self copyOperations: collection keepingOriginalDate: false ]);
 		  addItem: (self
 				   contextMenuItemNamed: 'Push up'
 				   iconNamed: #up
