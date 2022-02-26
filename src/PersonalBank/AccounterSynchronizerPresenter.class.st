@@ -108,8 +108,10 @@ AccounterSynchronizerPresenter >> deleteButton [
 			                  icon: (self iconNamed: #smallNew);
 			                  help: 'Won''t save';
 			                  action: [ 
-				                  accounterSynchronizer setAccounter:
-						                  Accounter new ];
+				                  (self userReallyWantsToDiscardChangesTo:
+						                   'create new accounter') ifTrue: [ 
+						                  accounterSynchronizer setAccounter:
+								                  Accounter new ] ];
 			                  yourself ]
 ]
 
@@ -175,15 +177,21 @@ AccounterSynchronizerPresenter >> openButton [
 			                icon: (self iconNamed: #smallOpen);
 			                help: 'Load from file';
 			                action: [ 
-				                | filename |
-				                filename := UIManager default
-					                            chooseExistingFileReference:
-						                            'Choose file to open'
-					                            extensions: #( 'json' )
-					                            path: accounterSynchronizer filename.
-				                filename ifNotNil: [ 
-						                accounterSynchronizer loadFromFile: filename ] ];
+				                (self userReallyWantsToDiscardChangesTo:
+						                 'load data') ifTrue: [ 
+						                self openDialogToOpenExistingFile ] ];
 			                yourself ]
+]
+
+{ #category : #actions }
+AccounterSynchronizerPresenter >> openDialogToOpenExistingFile [
+
+	| filename |
+	filename := UIManager default
+		            chooseExistingFileReference: 'Choose file to open'
+		            extensions: #( 'json' )
+		            path: accounterSynchronizer filename.
+	^ filename ifNotNil: [ accounterSynchronizer loadFromFile: filename ]
 ]
 
 { #category : #query }
@@ -317,7 +325,10 @@ AccounterSynchronizerPresenter >> undoButton [
 			                label: 'Discard changes';
 			                icon: (self iconNamed: #smallDelete);
 			                help: 'Reload file from disk';
-			                action: [ accounterSynchronizer reload ];
+			                action: [ 
+				                (self userReallyWantsToDiscardChangesTo:
+						                 'reload from file') ifTrue: [ 
+						                accounterSynchronizer reload ] ];
 			                enabled:
 				                (accounterSynchronizer unsavedChanges and: [ 
 						                 accounterSynchronizer filename notEmpty ]);
@@ -351,4 +362,15 @@ AccounterSynchronizerPresenter >> update: aSymbol [
 			(self theme iconNamed: self sanityStatusImageToDisplay) ].
 
 	toolBar update
+]
+
+{ #category : #query }
+AccounterSynchronizerPresenter >> userReallyWantsToDiscardChangesTo: descriptionString [
+
+	^ accounterSynchronizer unsavedChanges
+		  ifFalse: [ true ]
+		  ifTrue: [ 
+			  UIManager default confirm:
+				  'Unsaved changes! Do you really want to ' , descriptionString
+				  , ' ?' ]
 ]
