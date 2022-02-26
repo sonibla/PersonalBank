@@ -247,7 +247,8 @@ OperationEditorPresenter >> operationTableContextMenu [
 		  addItem: (self
 				   contextMenuItemNamed: 'Delete'
 				   iconNamed: #delete
-				   action: [ :toRemove | self removeOperations: toRemove ]);
+				   action: [ :toRemove | 
+					   self removeOperations: toRemove askingForConfirmation: true ]);
 		  addItem: (self
 				   contextMenuItemNamed: 'Copy'
 				   iconNamed: #smallCopy
@@ -299,6 +300,14 @@ OperationEditorPresenter >> pushUpOperations: aCollection [
 OperationEditorPresenter >> removeOperations: aCollection [
 
 	accounter removeOperations: aCollection
+]
+
+{ #category : #actions }
+OperationEditorPresenter >> removeOperations: aCollection askingForConfirmation: shouldAsk [
+
+	(shouldAsk and: [ 
+		 self userReallyWantsToDeleteOperations: aCollection ]) ifTrue: [ 
+		accounter removeOperations: aCollection ]
 ]
 
 { #category : #actions }
@@ -388,4 +397,12 @@ OperationEditorPresenter >> updateTable [
 	operationsTable model collection:
 		(self operationList copy reversed sorted: [ :a :b | a date < b date ]).
 	operationsTable refresh
+]
+
+{ #category : #query }
+OperationEditorPresenter >> userReallyWantsToDeleteOperations: aCollection [
+
+	^ UIManager default confirm:
+		  'Do you want to delete ' , aCollection size asString
+		  , (' operation' asPluralBasedOn: aCollection) , ' ?'
 ]
