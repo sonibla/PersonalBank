@@ -329,10 +329,11 @@ OperationEditorPresenter >> removeOperations: aCollection askingForConfirmation:
 { #category : #actions }
 OperationEditorPresenter >> selectItems: aCollection [
 
-	operationsTable selectionMode selectIndexes:
-		(aCollection collect: [ :anItem | 
-			 operationsTable selectionMode model collection identityIndexOf:
-				 anItem ])
+	operationsTable
+		selectIndexes: (aCollection collect: [ :anItem | 
+				 operationsTable selectionMode model collection identityIndexOf:
+					 anItem ])
+		scrollToSelection: true
 ]
 
 { #category : #initialization }
