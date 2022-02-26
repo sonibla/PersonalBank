@@ -25,7 +25,7 @@ Evaluate:
 ```
 AccountingNotebookPresenter new openWithSpec
 ```
-Then discover by yourself. A good UI shouldn't need explanations (same for the code btw)
+Then discover. Maybe my UI should need explanations, maybe not, idk (I did this app for myself so I made it intuitive for me, without following any UI/UX guidelines)
 
 ## License
 
