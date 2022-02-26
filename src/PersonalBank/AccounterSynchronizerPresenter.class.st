@@ -300,7 +300,7 @@ AccounterSynchronizerPresenter >> syncStatusImage [
 { #category : #query }
 AccounterSynchronizerPresenter >> syncStatusImageToDisplay [
 
-	^ accounterSynchronizer unsavedChanges
+	^ self unsavedChanges
 		  ifFalse: [ #testGreen ]
 		  ifTrue: [ 
 			  accounterSynchronizer filename
@@ -330,9 +330,15 @@ AccounterSynchronizerPresenter >> undoButton [
 						                 'reload from file') ifTrue: [ 
 						                accounterSynchronizer reload ] ];
 			                enabled:
-				                (accounterSynchronizer unsavedChanges and: [ 
+				                (self unsavedChanges and: [ 
 						                 accounterSynchronizer filename notEmpty ]);
 			                yourself ]
+]
+
+{ #category : #query }
+AccounterSynchronizerPresenter >> unsavedChanges [
+
+	^ accounterSynchronizer unsavedChanges
 ]
 
 { #category : #updating }
@@ -341,7 +347,7 @@ AccounterSynchronizerPresenter >> update: aSymbol [
 	aSymbol = #unsavedChanges ifTrue: [ 
 		syncStatusImage image:
 			(self theme iconNamed: self syncStatusImageToDisplay).
-		undoButton enabled: (accounterSynchronizer unsavedChanges and: [ 
+		undoButton enabled: (self unsavedChanges and: [ 
 				 accounterSynchronizer filename notEmpty ]) ].
 	aSymbol = #accounter ifTrue: [ 
 		syncStatusImage image:
@@ -367,7 +373,7 @@ AccounterSynchronizerPresenter >> update: aSymbol [
 { #category : #query }
 AccounterSynchronizerPresenter >> userReallyWantsToDiscardChangesTo: descriptionString [
 
-	^ accounterSynchronizer unsavedChanges
+	^ self unsavedChanges
 		  ifFalse: [ true ]
 		  ifTrue: [ 
 			  UIManager default confirm:
