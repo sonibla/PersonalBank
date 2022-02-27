@@ -37,5 +37,5 @@ OutcomeOperation class >> mayIncreaseTotalCapital [
 { #category : #printing }
 OutcomeOperation class >> printOn: aStream [
 
-	aStream << 'OUT'
+	aStream << 'Outcome'
 ]

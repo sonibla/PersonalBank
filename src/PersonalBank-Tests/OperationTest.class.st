@@ -181,27 +181,27 @@ OperationTest >> testPrintString [
 	self assert: operation printString equals: 'Operation'.
 
 	operation type: OutcomeOperation.
-	self assert: operation printString equals: 'Operation (OUT)'.
+	self assert: operation printString equals: 'Operation (Outcome)'.
 
 	operation date: (Date newDay: 01 month: 01 year: 2000).
 	self
 		assert: operation printString
-		equals: 'Operation (OUT) effective on 1 January 2000'.
+		equals: 'Operation (Outcome) effective on 1 January 2000'.
 
 	operation source: 'Source'.
 	self
 		assert: operation printString
-		equals: 'Operation (OUT) from Source effective on 1 January 2000'.
+		equals: 'Operation (Outcome) from Source effective on 1 January 2000'.
 
 	operation destination: 'Destination'.
 	self
 		assert: operation printString
 		equals:
-		'Operation (OUT) from Source to Destination effective on 1 January 2000'.
+		'Operation (Outcome) from Source to Destination effective on 1 January 2000'.
 
 	operation bank: 'Bank'.
 	self
 		assert: operation printString
 		equals:
-		'Operation (OUT) from Source to Destination effective on 1 January 2000 in bank Bank'
+		'Operation (Outcome) from Source to Destination effective on 1 January 2000 in bank Bank'
 ]

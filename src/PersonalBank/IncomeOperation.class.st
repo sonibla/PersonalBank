@@ -37,5 +37,5 @@ IncomeOperation class >> mayIncreaseTotalCapital [
 { #category : #printing }
 IncomeOperation class >> printOn: aStream [
 
-	aStream << 'IN'
+	aStream << 'Income'
 ]

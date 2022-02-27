@@ -37,5 +37,5 @@ BudgetTransferOperation class >> jsonId [
 { #category : #printing }
 BudgetTransferOperation class >> printOn: aStream [
 
-	aStream << 'BG-TR'
+	aStream << 'Budget'
 ]

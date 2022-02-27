@@ -37,5 +37,5 @@ BankTransferOperation class >> jsonId [
 { #category : #printing }
 BankTransferOperation class >> printOn: aStream [
 
-	aStream << 'BK-TR'
+	aStream << 'Bank'
 ]
