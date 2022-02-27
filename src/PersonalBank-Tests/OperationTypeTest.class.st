@@ -5,17 +5,17 @@ Class {
 }
 
 { #category : #tests }
-OperationTypeTest >> testFromString [
+OperationTypeTest >> testFromJsonId [
 
-	self assert: (OperationType fromString: 'IN') equals: IncomeOperation.
+	self assert: (OperationType fromJsonId: 'IN') equals: IncomeOperation.
 	self
-		assert: (OperationType fromString: 'OUT')
+		assert: (OperationType fromJsonId: 'OUT')
 		equals: OutcomeOperation.
 	self
-		assert: (OperationType fromString: 'BG-TR')
+		assert: (OperationType fromJsonId: 'BG-TR')
 		equals: BudgetTransferOperation.
 	self
-		assert: (OperationType fromString: 'BK-TR')
+		assert: (OperationType fromJsonId: 'BK-TR')
 		equals: BankTransferOperation
 ]
 

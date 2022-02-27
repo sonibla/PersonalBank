@@ -11,9 +11,9 @@ OperationType class >> bankFieldOptional [
 ]
 
 { #category : #'instance creation' }
-OperationType class >> fromString: aString [
+OperationType class >> fromJsonId: aString [
 
-	^ self possibleTypes detect: [ :each | each printString = aString ]
+	^ self possibleTypes detect: [ :each | each jsonId = aString ]
 ]
 
 { #category : #accessing }
@@ -48,6 +48,12 @@ OperationType class >> isTransferBetweenBanks [
 
 { #category : #testing }
 OperationType class >> isTransferBetweenBudgets [
+
+	self subclassResponsibility
+]
+
+{ #category : #printing }
+OperationType class >> jsonId [
 
 	self subclassResponsibility
 ]

@@ -29,6 +29,12 @@ BudgetTransferOperation class >> isTransferBetweenBudgets [
 ]
 
 { #category : #printing }
+BudgetTransferOperation class >> jsonId [
+
+	^ 'BG-TR'
+]
+
+{ #category : #printing }
 BudgetTransferOperation class >> printOn: aStream [
 
 	aStream << 'BG-TR'

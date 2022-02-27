@@ -15,7 +15,7 @@ AccounterSynchronizer class >> accounterFromArray: anArray [
 
 	^ Accounter onOperations: (anArray collect: [ :each | 
 			   Operation new
-				   type: (OperationType fromString: (each at: #type));
+				   type: (OperationType fromJsonId: (each at: #type));
 				   date: (each at: #date);
 				   source: (each at: #source);
 				   amount: (each at: #amount);
@@ -30,7 +30,7 @@ AccounterSynchronizer class >> arrayFromAccounter: anAccounter [
 	^ anAccounter operations
 		  collect: [ :each | 
 			  Dictionary new
-				  at: #type put: each type printString;
+				  at: #type put: each type jsonId;
 				  at: #date put: each date;
 				  at: #source put: each source;
 				  at: #amount put: each amount;

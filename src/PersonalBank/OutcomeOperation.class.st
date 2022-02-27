@@ -16,6 +16,12 @@ OutcomeOperation class >> isAbstract [
 	^ false
 ]
 
+{ #category : #printing }
+OutcomeOperation class >> jsonId [
+
+	^ 'OUT'
+]
+
 { #category : #testing }
 OutcomeOperation class >> mayDecreaseTotalCapital [
 

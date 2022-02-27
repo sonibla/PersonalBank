@@ -16,6 +16,12 @@ IncomeOperation class >> isAbstract [
 	^ false
 ]
 
+{ #category : #printing }
+IncomeOperation class >> jsonId [
+
+	^ 'IN'
+]
+
 { #category : #testing }
 IncomeOperation class >> mayDecreaseTotalCapital [
 
