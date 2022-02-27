@@ -175,6 +175,49 @@ AccounterProcessor >> generateBudgetCapitalDiagram [
 		  yourself
 ]
 
+{ #category : #utilities }
+AccounterProcessor >> generateBudgetTransfersDiagram [
+
+	"To refactor: computation should be ideally in Container i think"
+
+	| sankey budgetsTemp |
+	budgetsTemp := Container new.
+	self sortedOperations
+		select: [ :each | each type = BudgetTransferOperation ]
+		thenDo: [ :eachOperation | 
+			(budgetsTemp recursiveSubcontainerNamed: eachOperation source)
+				send: eachOperation amount
+				toSubcontainerNamed: eachOperation destination ].
+	sankey := RSSankey withAllAssociations:
+		          (budgetsTemp recursiveSubcontainersWithoutSelf 
+			           flatCollect: [ :each | 
+				           each subcontainers
+					           reject: [ :e | e roundedTotal isZero ]
+					           thenCollect: [ :eachSub | 
+					           each name -> eachSub roundedTotal -> eachSub name ] ]).
+	sankey boxShape @ (RSPopup new
+		 model: #yourself;
+		 text: [ :box | box model , ' - ' , box value asString ];
+		 yourself).
+	sankey boxShape
+		withBorder;
+		borderColor: self theme textColor;
+		width: 15.
+	sankey labelShape
+		color: self theme textColor;
+		fontSize: 13.
+	sankey boxColor: self theme darkBaseColor.
+	sankey lineShape color: (self theme lightBaseColor alpha: 0.5).
+	sankey
+		extent: 960 @ 500;
+		iterations: 32;
+		nodePadding: 10.
+	sankey build.
+	^ sankey canvas
+		  color: self theme backgroundColor;
+		  yourself
+]
+
 { #category : #initialization }
 AccounterProcessor >> initialize [
 

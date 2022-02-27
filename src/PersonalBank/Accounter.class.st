@@ -5,7 +5,8 @@ Class {
 		'operations',
 		'bankCapitalDiagram',
 		'budgetCapitalDiagram',
-		'processor'
+		'processor',
+		'budgetTransfersDiagram'
 	],
 	#category : #'PersonalBank-Core'
 }
@@ -78,6 +79,19 @@ Accounter >> budgetCapitalDiagram: anObject [
 ]
 
 { #category : #accessing }
+Accounter >> budgetTransfersDiagram [
+
+	^ budgetTransfersDiagram ifNil: [ self defaultCanvasForError: false ]
+]
+
+{ #category : #accessing }
+Accounter >> budgetTransfersDiagram: anObject [
+
+	budgetTransfersDiagram := anObject.
+	self changed: #budgetTransfersDiagram
+]
+
+{ #category : #accessing }
 Accounter >> defaultCanvasForError: error [
 
 	| canvas |
@@ -115,6 +129,14 @@ Accounter >> generateBankCapitalDiagram [
 Accounter >> generateBudgetCapitalDiagram [
 
 	^ [ self processor generateBudgetCapitalDiagram ]
+		  on: Error
+		  do: [ self defaultCanvasForError: true ]
+]
+
+{ #category : #utilities }
+Accounter >> generateBudgetTransfersDiagram [
+
+	^ [ self processor generateBudgetTransfersDiagram ]
 		  on: Error
 		  do: [ self defaultCanvasForError: true ]
 ]
@@ -258,6 +280,7 @@ Accounter >> update: aSymbol [
 	aSymbol = #processingFinished ifTrue: [ 
 		self bankCapitalDiagram: self generateBankCapitalDiagram.
 		self budgetCapitalDiagram: self generateBudgetCapitalDiagram.
+		self budgetTransfersDiagram: self generateBudgetTransfersDiagram.
 		self changed: #statistics ].
 
 	(#( #type #source #destination #date #bank #amount ) includes:
