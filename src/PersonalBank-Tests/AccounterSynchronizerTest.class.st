@@ -261,3 +261,17 @@ AccounterSynchronizerTest >> testStringConversion [
 						  onStream: stream ]) readStream)
 		equals: self dummyAccounter
 ]
+
+{ #category : #'tests - file sync' }
+AccounterSynchronizerTest >> testUnsavedChanges [
+
+	self deny: AccounterSynchronizer new unsavedChanges.
+	self assert: self dummyAccounterSynchronizer unsavedChanges.
+	self dummyAccounterSynchronizer saveOnFile: self filenameForTesting.
+	self dummyAccounterSynchronizer autosave: false.
+	self dummyAccounterSynchronizer accounter removeOperations:
+		self dummyAccounterSynchronizer accounter operations.
+	self assert: self dummyAccounterSynchronizer unsavedChanges.
+	self dummyAccounterSynchronizer filename: ''.
+	self deny: self dummyAccounterSynchronizer unsavedChanges
+]

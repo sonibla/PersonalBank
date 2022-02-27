@@ -114,14 +114,16 @@ AccounterSynchronizer >> filename: anObject [
 
 	| unChanged newFilename |
 	newFilename := anObject isString
-		            ifFalse: [ 
-			            anObject isFile
-				            ifTrue: [ anObject fullName ]
-				            ifFalse: [ anObject asString ] ]
-		            ifTrue: [ anObject ].
+		               ifFalse: [ 
+			               anObject isFile
+				               ifTrue: [ anObject fullName ]
+				               ifFalse: [ anObject asString ] ]
+		               ifTrue: [ anObject ].
 	unChanged := filename = newFilename.
 	filename := newFilename.
-	unChanged ifFalse: [ self changed: #filename ]
+	unChanged ifFalse: [ 
+		self changed: #filename.
+		self update: #filename ]
 ]
 
 { #category : #initialization }
@@ -185,10 +187,11 @@ AccounterSynchronizer >> shouldAutoSave [
 { #category : #query }
 AccounterSynchronizer >> synchronizedWithFile: aFile [
 
-	^ aFile asFileReference exists and: [ 
-		  aFile asFileReference isFile and: [ 
+	^ (aFile asFileReference exists and: [ aFile asFileReference isFile ])
+		  ifTrue: [ 
 			  (self class readFromFile: aFile asFileReference) operations
-			  = self accounter operations ] ]
+			  = self accounter operations ]
+		  ifFalse: [ self accounter = Accounter new ]
 ]
 
 { #category : #accessing }
@@ -210,6 +213,8 @@ AccounterSynchronizer >> unsavedChanges: anObject [
 AccounterSynchronizer >> update: aSymbol [
 
 	aSymbol = #operations ifTrue: [ 
+		self unsavedChanges: self fileIsCorrectlySync not ].
+	aSymbol = #filename ifTrue: [ 
 		self unsavedChanges: self fileIsCorrectlySync not ].
 	aSymbol = #statistics ifTrue: [ 
 		self shouldAutoSave ifTrue: [ self saveOnFile: self filename ].
