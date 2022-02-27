@@ -300,12 +300,9 @@ AccounterSynchronizerPresenter >> syncStatusImageToDisplay [
 	^ self unsavedChanges
 		  ifFalse: [ #testGreen ]
 		  ifTrue: [ 
-			  accounterSynchronizer filename
-				  ifEmpty: [ 
-					  accounterSynchronizer accounter = Accounter new
-						  ifTrue: [ #testNotRun ]
-						  ifFalse: [ #testRed ] ]
-				  ifNotEmpty: [ #testYellow ] ]
+			  accounterSynchronizer autosave
+				  ifTrue: [ #testRed ]
+				  ifFalse: [ #testYellow ] ]
 ]
 
 { #category : #actions }
@@ -344,7 +341,8 @@ AccounterSynchronizerPresenter >> update: aSymbol [
 	aSymbol = #unsavedChanges ifTrue: [ 
 		syncStatusImage image:
 			(self theme iconNamed: self syncStatusImageToDisplay).
-		undoButton enabled: (self unsavedChanges and: [ 
+		undoButton enabled:
+			(self unsavedChanges and: [ 
 				 accounterSynchronizer filename notEmpty ]) ].
 	aSymbol = #accounter ifTrue: [ 
 		syncStatusImage image:
@@ -356,7 +354,9 @@ AccounterSynchronizerPresenter >> update: aSymbol [
 			filenameLabel text: accounterSynchronizer filename ] ].
 	aSymbol = #autosave ifTrue: [ 
 		accounterSynchronizer autosave = autosaveButton state ifFalse: [ 
-			autosaveButton state: accounterSynchronizer autosave ] ].
+			autosaveButton state: accounterSynchronizer autosave ].
+		syncStatusImage image:
+			(self theme iconNamed: self syncStatusImageToDisplay) ].
 	aSymbol = #statistics ifTrue: [ 
 		sanityImage enabled:
 			(self accounter errorWhileProcessing notNil or: [ 
