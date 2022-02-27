@@ -100,7 +100,7 @@ AccounterSynchronizer >> autosave: anObject [
 { #category : #query }
 AccounterSynchronizer >> fileIsCorrectlySync [
 
-	^ self synchronizedWithFilename: self filename
+	^ self synchronizedWithFile: self filename
 ]
 
 { #category : #accessing }
@@ -154,7 +154,7 @@ AccounterSynchronizer >> save [
 AccounterSynchronizer >> saveOnFile: aString [
 
 	self class write: accounter onFile: aString.
-	(self synchronizedWithFilename: aString) ifTrue: [ 
+	(self synchronizedWithFile: aString) ifTrue: [ 
 		self filename: aString.
 		self unsavedChanges: false ]
 ]
@@ -185,19 +185,10 @@ AccounterSynchronizer >> shouldAutoSave [
 { #category : #query }
 AccounterSynchronizer >> synchronizedWithFile: aFile [
 
-	^ aFile exists and: [ 
-		  (self class readFromFile: aFile) operations
-		  = self accounter operations ]
-]
-
-{ #category : #query }
-AccounterSynchronizer >> synchronizedWithFilename: aString [
-
-	^ aString isString
-		  ifFalse: [ self synchronizedWithFile: aString ]
-		  ifTrue: [ 
-			  aString isNotEmpty and: [ 
-				  self synchronizedWithFile: aString asFileReference ] ]
+	^ aFile asFileReference exists and: [ 
+		  aFile asFileReference isFile and: [ 
+			  (self class readFromFile: aFile asFileReference) operations
+			  = self accounter operations ] ]
 ]
 
 { #category : #accessing }
