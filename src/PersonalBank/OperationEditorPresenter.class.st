@@ -82,14 +82,18 @@ OperationEditorPresenter >> connectPresenters [
 		selection selectedItems size = 1
 			ifTrue: [ self editOperation: selection selectedItem ]
 			ifFalse: [ self editDummyOperation ] ].
-	bank whenSubmitDo: [ self submitEditedOperationClearingForm: true ].
-	destination whenSubmitDo: [ 
+	bank whenSubmitDo: [ :text | 
 		self submitEditedOperationClearingForm: true ].
-	source whenSubmitDo: [ self submitEditedOperationClearingForm: true ].
-	destination whenSubmitDo: [ 
+	destination whenSubmitDo: [ :text | 
 		self submitEditedOperationClearingForm: true ].
-	amount whenSubmitDo: [ self submitEditedOperationClearingForm: true ].
-	date whenSubmitDo: [ self submitEditedOperationClearingForm: true ].
+	source whenSubmitDo: [ :text | 
+		self submitEditedOperationClearingForm: true ].
+	destination whenSubmitDo: [ :text | 
+		self submitEditedOperationClearingForm: true ].
+	amount whenSubmitDo: [ :text | 
+		self submitEditedOperationClearingForm: true ].
+	date whenSubmitDo: [ :text | 
+		self submitEditedOperationClearingForm: true ].
 	type whenSelectionChangedDo: [ :selection | 
 		bank editable: selection selectedItem model bankFieldOptional not.
 		self submitEditedOperationClearingForm: false ].
@@ -367,12 +371,13 @@ OperationEditorPresenter >> submitEditedOperationClearingForm: shouldClearForm [
 	type selectedItem bankFieldOptional ifTrue: [ bank clearContent ].
 	self submitEditedOperationInto: operationBeingEdited.
 	self addOperation: operationBeingEdited.
+	self updateTable.
+	self selectItems: { operationBeingEdited }.
 	self editOperation: (shouldClearForm
 			 ifFalse: [ operationBeingEdited ]
 			 ifTrue: [ 
 				 self unselectAll.
-				 Operation dummy ]).
-	self updateTable
+				 Operation dummy ])
 ]
 
 { #category : #actions }

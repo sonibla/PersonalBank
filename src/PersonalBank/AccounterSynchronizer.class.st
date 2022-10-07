@@ -18,7 +18,7 @@ AccounterSynchronizer class >> accounterFromArray: anArray [
 				   type: (OperationType fromJsonId: (each at: #type));
 				   date: (each at: #date);
 				   source: (each at: #source);
-				   amount: (each at: #amount);
+				   amount: (each at: #amount) asNumber;
 				   destination: (each at: #destination);
 				   bank: (each at: #bank);
 				   yourself ])
@@ -33,7 +33,7 @@ AccounterSynchronizer class >> arrayFromAccounter: anAccounter [
 				  at: #type put: each type jsonId;
 				  at: #date put: each date;
 				  at: #source put: each source;
-				  at: #amount put: each amount;
+				  at: #amount put: each amount asString;
 				  at: #destination put: each destination;
 				  at: #bank put: each bank;
 				  yourself ]
@@ -63,9 +63,12 @@ AccounterSynchronizer class >> readFromStream: aStream [
 { #category : #'file in/out' }
 AccounterSynchronizer class >> write: anAccounter onFile: aString [
 
-	| stream |
-	stream := aString asFileReference writeStream.
+	| file stream |
+	file := aString asFileReference.
+	file deleteIfAbsent: [  ].
+	stream := file writeStream.
 	self write: anAccounter onStream: stream.
+	stream flush.
 	stream close
 ]
 
