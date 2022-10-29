@@ -54,7 +54,7 @@ AccounterSynchronizerPresenterTest >> testSanityIssuesString [
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (BudgetTransferOperation
 			                    on: (Date newDay: 4 month: 1 year: 2000)
-			                    change: 'Budget1' -> 500 -> 'Budget2') ].
+			                    change: 'Budget1' -> 500 -> 'Budget1-SubA') ].
 	operationToEdit amount: 400.
 	self assert: presenter sanityIssuesString equals: 'partialSplits
 '.
@@ -69,7 +69,7 @@ partialSplits
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (BudgetTransferOperation
 			                    on: (Date newDay: 4 month: 1 year: 2000)
-			                    change: 'Budget1' -> 400 -> 'Budget2') ].
+			                    change: 'Budget1' -> 400 -> 'Budget1-SubA') ].
 	operationToEdit amount: 500.
 	self assert: presenter sanityIssuesString equals: 'negativeCapitals
 '

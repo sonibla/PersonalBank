@@ -108,7 +108,7 @@ AccounterTest >> testPullDownOperationsSeveral [
 	self
 		assert: self dummyAccounter operations
 		equals: (original first: 3) , { (original at: 8) }
-			, (original copyFrom: 4 to: 7) , (original last: 1)
+			, (original copyFrom: 4 to: 7) , (original last: 2)
 ]
 
 { #category : #tests }
@@ -147,7 +147,7 @@ AccounterTest >> testPushUpOperationsSeveral [
 	self
 		assert: self dummyAccounter operations
 		equals: (original first: 2) , (original copyFrom: 4 to: 7)
-			, { (original at: 3) } , (original last: 2)
+			, { (original at: 3) } , (original last: 3)
 ]
 
 { #category : #tests }

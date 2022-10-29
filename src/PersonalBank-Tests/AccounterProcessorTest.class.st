@@ -8,7 +8,7 @@ Class {
 AccounterProcessorTest >> testBankCapitals [
 
 	self assert: self dummyAccounter processor bankCapitals equals: { 
-			('Bank1' -> 238).
+			('Bank1' -> 1238).
 			('Bank2' -> 1620).
 			('Bank3' -> 90) } asSet
 ]
@@ -19,10 +19,11 @@ AccounterProcessorTest >> testBudgetsCapitals [
 	self
 		assert: self dummyAccounter processor budgetsCapitals
 		equals: { 
-				('Budget3' -> 548).
-				('Budget4' -> 900).
+				('Budget1-SubB' -> 548).
+				('Budget1-SubC' -> 900).
 				('Budget1' -> 0).
-				('Budget2' -> 500) } asSet
+				('Budget2' -> 1000).
+				('Budget1-SubA' -> 500) } asSet
 ]
 
 { #category : #'tests - sanity checks' }
@@ -63,7 +64,7 @@ AccounterProcessorTest >> testSanityIssueDuplicatedNames [
 	self dummyAccounter
 		addOperation: (BudgetTransferOperation
 				 on: (Date newDay: 9 month: 1 year: 2000)
-				 change: 'Budget2' -> 500 -> 'Budget2bis');
+				 change: 'Budget1-SubA' -> 500 -> 'Budget2bis');
 		addOperation: (BudgetTransferOperation
 				 on: (Date newDay: 9 month: 1 year: 2000)
 				 change: 'Budget1' -> 500 -> 'Budget2bis').
@@ -78,7 +79,7 @@ AccounterProcessorTest >> testSanityIssueNegativeCapitalAfterBudgetTransfer [
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (BudgetTransferOperation
 			                    on: (Date newDay: 4 month: 1 year: 2000)
-			                    change: 'Budget1' -> 500 -> 'Budget2') ].
+			                    change: 'Budget1' -> 500 -> 'Budget1-SubA') ].
 	operationToEdit amount: 600.
 	self assert: self dummyAccounter processor negativeCapitals
 ]
@@ -118,7 +119,7 @@ AccounterProcessorTest >> testSanityIssuePartialSplit [
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (BudgetTransferOperation
 			                    on: (Date newDay: 4 month: 1 year: 2000)
-			                    change: 'Budget1' -> 500 -> 'Budget2') ].
+			                    change: 'Budget1' -> 500 -> 'Budget1-SubA') ].
 	operationToEdit amount: 400.
 	self assert: self dummyAccounter processor partialSplits
 ]

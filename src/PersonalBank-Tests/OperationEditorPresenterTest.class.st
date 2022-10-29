@@ -192,37 +192,37 @@ OperationEditorPresenterTest >> testSorting [
 	presenter operationsTable selectIndex: 2.
 	self
 		assert: presenter operationsTable selectedItem
-		equals: (self dummyOperations at: 2).
+		equals: (self dummyOperations at: 7).
 
 	presenter unselectAll.
 	presenter operationsTable selectIndex: 3.
 	self
 		assert: presenter operationsTable selectedItem
-		equals: (self dummyOperations at: 3).
+		equals: (self dummyOperations at: 2).
 
 	presenter unselectAll.
 	presenter operationsTable selectIndex: 4.
 	self
 		assert: presenter operationsTable selectedItem
-		equals: (self dummyOperations at: 4).
+		equals: (self dummyOperations at: 3).
 
 	presenter unselectAll.
 	presenter operationsTable selectIndex: 5.
 	self
 		assert: presenter operationsTable selectedItem
-		equals: (self dummyOperations at: 6).
+		equals: (self dummyOperations at: 4).
 
 	presenter unselectAll.
 	presenter operationsTable selectIndex: 6.
 	self
 		assert: presenter operationsTable selectedItem
-		equals: (self dummyOperations at: 5).
+		equals: (self dummyOperations at: 6).
 
 	presenter unselectAll.
 	presenter operationsTable selectIndex: 7.
 	self
 		assert: presenter operationsTable selectedItem
-		equals: (self dummyOperations at: 7).
+		equals: (self dummyOperations at: 5).
 
 	presenter unselectAll.
 	presenter operationsTable selectIndex: 8.
@@ -246,9 +246,9 @@ OperationEditorPresenterTest >> testStaysSortedAfterEdit [
 	presenter operationsTable selectIndex: 3.
 	self
 		assert: presenter operationsTable selectedItem
-		equals: (self dummyOperations at: 3).
+		equals: (self dummyOperations at: 2).
 	presenter date text: '19/01/2021'.
-	presenter type selectItem: OutcomeOperation.
+	presenter type selectItem: IncomeOperation.
 
 	presenter unselectAll.
 	presenter operationsTable selectIndex: 3.
@@ -258,9 +258,9 @@ OperationEditorPresenterTest >> testStaysSortedAfterEdit [
 				 (Date newDay: 19 month: 1 year: 2021)).
 
 	presenter unselectAll.
-	presenter operationsTable selectIndex: 9.
+	presenter operationsTable selectIndex: 10.
 	self
 		assert: presenter operationsTable selectedItem
-		equals: ((self dummyOperations at: 3) date:
+		equals: ((self dummyOperations at: 2) date:
 				 (Date newDay: 19 month: 1 year: 2021))
 ]

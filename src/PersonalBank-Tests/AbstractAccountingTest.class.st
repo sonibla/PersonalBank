@@ -77,19 +77,23 @@ AbstractAccountingTest >> dummyOperations [
 			   change: 'Bank1' -> 420 -> 'Bank2').
 		  (BudgetTransferOperation
 			   on: (Date newDay: 4 month: 1 year: 2000)
-			   change: 'Budget1' -> 500 -> 'Budget2').
+			   change: 'Budget1' -> 500 -> 'Budget1-SubA').
 		  (BankTransferOperation
 			   on: (Date newDay: 3 month: 1 year: 2000)
 			   change: 'Bank1' -> 90 -> 'Bank3').
+		  (IncomeOperation
+			   on: (Date newDay: 1 month: 1 year: 2000)
+			   change: 'Source3' -> 1000 -> 'Budget2'
+			   bank: 'Bank1').
 		  (BudgetTransferOperation
 			   on: (Date newDay: 4 month: 1 year: 2000)
-			   change: 'Budget1' -> 600 -> 'Budget3').
+			   change: 'Budget1' -> 600 -> 'Budget1-SubB').
 		  (BudgetTransferOperation
 			   on: (Date newDay: 4 month: 1 year: 2000)
-			   change: 'Budget1' -> 900 -> 'Budget4').
+			   change: 'Budget1' -> 900 -> 'Budget1-SubC').
 		  (OutcomeOperation
 			   on: (Date newDay: 7 month: 1 year: 2000)
-			   change: 'Budget3' -> 52 -> 'Destination2'
+			   change: 'Budget1-SubB' -> 52 -> 'Destination2'
 			   bank: 'Bank1') }
 ]
 
