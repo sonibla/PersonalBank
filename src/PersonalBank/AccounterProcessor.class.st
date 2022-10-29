@@ -340,5 +340,5 @@ AccounterProcessor >> sortedOperations [
 { #category : #updating }
 AccounterProcessor >> update: aSymbol [
 
-	aSymbol = #operations ifTrue: [ self processDataErrorSafely ]
+	aSymbol = #operations ifTrue: [ self processDataErrorSafely]
 ]

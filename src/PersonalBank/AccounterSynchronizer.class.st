@@ -157,7 +157,6 @@ AccounterSynchronizer >> save [
 
 { #category : #actions }
 AccounterSynchronizer >> saveOnFile: aString [
-
 	self class write: accounter onFile: aString.
 	(self synchronizedWithFile: aString) ifTrue: [ 
 		self filename: aString.
