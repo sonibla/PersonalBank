@@ -68,7 +68,7 @@ AccounterProcessorTest >> testSanityIssueDuplicatedNames [
 		addOperation: (BudgetTransferOperation
 				 on: (Date newDay: 9 month: 1 year: 2000)
 				 change: 'Budget1' -> 500 -> 'Budget2bis').
-	self assert: self dummyAccounter processor duplicatedNames
+	self deny: self dummyAccounter processor duplicatedNames
 ]
 
 { #category : #'tests - sanity checks' }

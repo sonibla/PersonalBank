@@ -254,9 +254,17 @@ AccounterProcessor >> registerBankTransfer: anOperation [
 { #category : #processing }
 AccounterProcessor >> registerBudgetTransfer: anOperation [
 
-	(budgets recursiveSubcontainerNamed: anOperation source)
-		send: anOperation amount
-		toSubcontainerNamed: anOperation destination
+	| destinationCandidates sourceBudget destionationBudget |
+	sourceBudget := budgets recursiveSubcontainerNamed:
+		                anOperation source.
+	destinationCandidates := budgets recursiveSubcontainersNamed:
+		              anOperation destination.
+	destionationBudget := destinationCandidates size = 1
+		                      ifTrue: [ destinationCandidates anyOne ]
+		                      ifFalse: [ 
+		                      sourceBudget subcontainerNamed:
+			                      anOperation destination ].
+	sourceBudget send: anOperation amount to: destionationBudget
 ]
 
 { #category : #processing }
