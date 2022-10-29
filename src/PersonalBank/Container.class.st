@@ -126,7 +126,6 @@ Container >> hash [
 Container >> income [
 
 	^ income
-	"^ incomes ifEmpty: [ 0 ] ifNotEmpty: [ :list | list sum ]"
 ]
 
 { #category : #initialization }
