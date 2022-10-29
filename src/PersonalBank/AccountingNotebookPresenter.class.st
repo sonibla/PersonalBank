@@ -6,8 +6,7 @@ Class {
 		'capitalDiagram',
 		'operationEditor',
 		'accounterSynchronizer',
-		'synchronizerPresenter',
-		'budgetTransfersDiagram'
+		'synchronizerPresenter'
 	],
 	#category : #'PersonalBank-GUI'
 }
@@ -34,15 +33,6 @@ AccountingNotebookPresenter >> accounterSynchronizer [
 ]
 
 { #category : #pages }
-AccountingNotebookPresenter >> budgetTransfersDiagramPage [
-
-	^ SpNotebookPage
-		  title: 'Budget transfers diagram'
-		  icon: (self iconNamed: #publish)
-		  provider: [ budgetTransfersDiagram ]
-]
-
-{ #category : #pages }
 AccountingNotebookPresenter >> capitalDiagramPage [
 
 	^ SpNotebookPage
@@ -64,15 +54,12 @@ AccountingNotebookPresenter >> initializePresenters [
 	synchronizerPresenter := self instantiate:
 		                         AccounterSynchronizerPresenter new.
 	capitalDiagram := self instantiate: CapitalDiagramPresenter new.
-	budgetTransfersDiagram := self instantiate:
-		                          BudgetTransfersDiagramPresenter new.
 	operationEditor := self instantiate: OperationEditorPresenter new.
 	notebook := self newNotebook.
 
 	notebook
 		addPage: self operationEditorPage;
-		addPage: self capitalDiagramPage;
-		addPage: self budgetTransfersDiagramPage
+		addPage: self capitalDiagramPage
 ]
 
 { #category : #initialization }
@@ -112,7 +99,6 @@ AccountingNotebookPresenter >> update: aSymbol [
 
 	aSymbol = #accounter ifTrue: [ 
 		capitalDiagram setAccounter: accounterSynchronizer accounter.
-		budgetTransfersDiagram setAccounter: accounterSynchronizer accounter.
 		operationEditor setAccounter: accounterSynchronizer accounter ].
 	aSymbol = #unsavedChanges ifTrue: [ 
 		self window ifNotNil: [ 
