@@ -13,6 +13,23 @@ AccounterProcessorTest >> testBankCapitals [
 			('Bank3' -> 90) } asSet
 ]
 
+{ #category : #'tests - sanity checks' }
+AccounterProcessorTest >> testBudgetTransferOutsideOfSourceSubcontainer [
+
+	self dummyAccounter addOperation: (BudgetTransferOperation
+			 on: (Date newDay: 9 month: 1 year: 2000)
+			 change: 'Budget1-SubA' -> 13 -> 'Budget1-SubC').
+
+	self
+		assert: self dummyAccounter processor budgetsCapitals
+		equals: { 
+				('Budget1-SubB' -> 548).
+				('Budget1-SubC' -> 913).
+				('Budget1' -> 0).
+				('Budget2' -> 1000).
+				('Budget1-SubA' -> 487) } asSet
+]
+
 { #category : #'tests - processing' }
 AccounterProcessorTest >> testBudgetsCapitals [
 
