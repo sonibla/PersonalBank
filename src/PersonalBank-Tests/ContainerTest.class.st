@@ -41,9 +41,9 @@ ContainerTest >> setUp [
 { #category : #'tests - subcontainers' }
 ContainerTest >> testAddDeepSubcontainers [
 
-	container income: randomInteger1.
-	container1 income: randomInteger2.
-	container2 income: randomFloat.
+	container addIncome: randomInteger1.
+	container1 addIncome: randomInteger2.
+	container2 addIncome: randomFloat.
 	self assert: container subcontainers isEmpty.
 	self assert: container1 subcontainers isEmpty.
 	self assert: container totalIncome equals: randomInteger1.
@@ -75,7 +75,7 @@ ContainerTest >> testAddDeepSubcontainers [
 
 { #category : #'tests - addIncome' }
 ContainerTest >> testAddIncomeFloat [
-	container income: 0.1.
+	container addIncome: 0.1.
 	self
 		assert: (container addIncome: 0.2)
 		closeTo: 0.2
@@ -84,7 +84,8 @@ ContainerTest >> testAddIncomeFloat [
 ]
 
 { #category : #'tests - addIncome' }
-ContainerTest >> testAddIncomeFractionnal [
+ContainerTest >> testAddIncomeFractionnal1 [
+
 	"Positive"
 
 	self
@@ -101,10 +102,14 @@ ContainerTest >> testAddIncomeFractionnal [
 	self
 		assert: container income
 		closeTo: 1 / 2 - (2 / 3)
-		precision: epsilon.
+		precision: epsilon
+]
+
+{ #category : #'tests - addIncome' }
+ContainerTest >> testAddIncomeFractionnal2 [
 
 	"0.1 binary representation is not exact"
-	container income: 0.
+
 	self
 		assert: (container addIncome: 1 / 10)
 		closeTo: 1 / 10
@@ -119,7 +124,7 @@ ContainerTest >> testAddIncomeFractionnal [
 
 { #category : #'tests - addIncome' }
 ContainerTest >> testAddIncomeLargeInteger [
-	container income: randomFloat.
+	container addIncome: randomFloat.
 	self
 		assert:
 			(container
@@ -147,22 +152,6 @@ ContainerTest >> testAddIncomeNegativeInteger [
 ]
 
 { #category : #'tests - addIncome' }
-ContainerTest >> testAddIncomeNotNumbers [
-	"Add infinity or nan"
-
-	self assert: (container addIncome: Float infinity) equals: 0.
-	self assert: container income isZero.
-	self assert: (container addIncome: Float nan) equals: 0.
-	self assert: container income isZero.
-	self assert: (container addIncome: '12') equals: 0.
-	self assert: container income isZero.
-	self assert: (container addIncome: nil) equals: 0.
-	self assert: container income isZero.
-	self assert: (container addIncome: true) equals: 0.
-	self assert: container income isZero
-]
-
-{ #category : #'tests - addIncome' }
 ContainerTest >> testAddIncomePositiveInteger [
 	"Add a positive income (addIncome: returns added income)"
 
@@ -179,7 +168,7 @@ ContainerTest >> testAddIncomePositiveInteger [
 
 { #category : #'tests - addIncome' }
 ContainerTest >> testAddIncomeRandomFloat [
-	container income: randomFloat.
+	container addIncome: randomFloat.
 	self
 		assert: (container addIncome: randomPositive)
 		closeTo: randomPositive
@@ -193,7 +182,8 @@ ContainerTest >> testAddIncomeRandomFloat [
 ]
 
 { #category : #'tests - addOutcome' }
-ContainerTest >> testAddOutcomeFractionnal [
+ContainerTest >> testAddOutcomeFractionnal1 [
+
 	"Positive"
 
 	self
@@ -210,10 +200,14 @@ ContainerTest >> testAddOutcomeFractionnal [
 	self
 		assert: container income
 		closeTo: -1 / 2 + (2 / 3)
-		precision: epsilon.
+		precision: epsilon
+]
+
+{ #category : #'tests - addOutcome' }
+ContainerTest >> testAddOutcomeFractionnal2 [
 
 	"0.1 binary representation is not exact"
-	container income: 0.
+
 	self
 		assert: (container addOutcome: 1 / 10)
 		closeTo: 1 / 10
@@ -228,7 +222,7 @@ ContainerTest >> testAddOutcomeFractionnal [
 
 { #category : #'tests - addOutcome' }
 ContainerTest >> testAddOutcomeLargeInteger [
-	container income: randomFloat.
+	container addIncome: randomFloat.
 	self
 		assert:
 			(container
@@ -272,7 +266,7 @@ ContainerTest >> testAddOutcomePositiveInteger [
 
 { #category : #'tests - addOutcome' }
 ContainerTest >> testAddOutomeFloat [
-	container outcome: 0.1.
+	container addOutcome: 0.1.
 	self
 		assert: (container addOutcome: 0.2)
 		closeTo: 0.2
@@ -304,22 +298,6 @@ ContainerTest >> testAddOutomeFloat [
 				- 51.77202372819618 asMinimalDecimalFraction
 				- randomFloat asMinimalDecimalFraction
 		precision: epsilon
-]
-
-{ #category : #'tests - addOutcome' }
-ContainerTest >> testAddOutomeNotNumbers [
-	"Add infinity or nan"
-
-	self assert: (container addOutcome: Float infinity) equals: 0.
-	self assert: container income isZero.
-	self assert: (container addOutcome: Float nan) equals: 0.
-	self assert: container income isZero.
-	self assert: (container addOutcome: '12') equals: 0.
-	self assert: container income isZero.
-	self assert: (container addOutcome: nil) equals: 0.
-	self assert: container income isZero.
-	self assert: (container addOutcome: true) equals: 0.
-	self assert: container income isZero
 ]
 
 { #category : #'tests - subcontainers' }
@@ -395,12 +373,12 @@ ContainerTest >> testEmptySubcontainers [
 	container addSubcontainer.
 	subContainer2 := container2 addSubcontainer.
 	self assert: container2 hasEmptySubcontainers.
-	subContainer2 income: randomInteger1.
+	subContainer2 addIncome: randomInteger1.
 	container1 addSubcontainer.
 	self assert: container hasEmptySubcontainers.
-	container2 income: randomInteger1.
+	container2 addIncome: randomInteger1.
 	self deny: container2 hasEmptySubcontainers.
-	subContainer2 income: 0.
+	subContainer2 addOutcome: randomInteger1.
 	self assert: container hasEmptySubcontainers.
 	self assert: container1 hasEmptySubcontainers.
 	self assert: container2 hasEmptySubcontainers.
@@ -408,15 +386,21 @@ ContainerTest >> testEmptySubcontainers [
 ]
 
 { #category : #tests }
-ContainerTest >> testEqualsSign [
+ContainerTest >> testEqualsSign1 [
 
-	container income: randomInteger1.
-	container1 income: randomInteger1.
+	container addIncome: randomInteger1.
+	container1 addIncome: randomInteger1.
 	self assert: container equals: container1.
-	self assert: container hash equals: container1 hash.
-	container income: randomInteger1.
-	container1 income: randomInteger1 + randomFloat.
-	self deny: container equals: container1
+	self assert: container hash equals: container1 hash
+]
+
+{ #category : #tests }
+ContainerTest >> testEqualsSign2 [
+
+	container addIncome: randomInteger1.
+	container1 addIncome: randomInteger1 + randomFloat.
+	self deny: container equals: container1.
+	self deny: container hash equals: container1 hash
 ]
 
 { #category : #tests }
@@ -434,13 +418,15 @@ ContainerTest >> testExactValueFor [
 
 { #category : #'tests - totalCapital' }
 ContainerTest >> testFloatTotalCapital [
+
 	"Float capital"
 
-	container income: 0.1.
+	container addIncome: 0.1.
 	self assert: container income closeTo: 1 / 10 precision: epsilon.
 	container addIncome: 0.2.
 	self assert: container income closeTo: 3 / 10 precision: epsilon.
-	container income: randomFloat.
+	container addOutcome: 3 / 10.
+	container addIncome: randomFloat.
 	self assert: container income closeTo: randomFloat precision: epsilon
 ]
 
@@ -448,7 +434,7 @@ ContainerTest >> testFloatTotalCapital [
 ContainerTest >> testFractionnalTotalCapital [
 	"Fractional capital"
 
-	container income: -12.
+	container addIncome: -12.
 	container addIncome: 1 / 2.
 	self
 		assert: container income
@@ -460,24 +446,14 @@ ContainerTest >> testFractionnalTotalCapital [
 ContainerTest >> testIncomeFloat [
 	"Float capital"
 
-	container income: 0.1.
+	container addIncome: 0.1.
 	self assert: container income closeTo: 1 / 10 precision: epsilon
-]
-
-{ #category : #'tests - income' }
-ContainerTest >> testIncomeFractionnal [
-	"Fractional capital"
-
-	container income: 1 / 2.
-	self assert: container income closeTo: 1 / 2 precision: epsilon.
-	container income: 2 / 3.
-	self assert: container income closeTo: 2 / 3 precision: epsilon
 ]
 
 { #category : #'tests - subcontainers' }
 ContainerTest >> testIncomeIsSumOfSubcontainersIncomes [
-	container income: randomInteger1.
-	container1 income: randomInteger2.
+	container addIncome: randomInteger1.
+	container1 addIncome: randomInteger2.
 	self assert: container totalIncome equals: randomInteger1.
 	self assert: container1 totalIncome equals: randomInteger2.
 	container addSubcontainer: container1.
@@ -491,7 +467,7 @@ ContainerTest >> testIncomeIsSumOfSubcontainersIncomes [
 { #category : #'tests - income' }
 ContainerTest >> testIncomeLargeInteger [
 	self
-		assert: (container income: 123456789987654321e95)
+		assert: (container addIncome: 123456789987654321e95)
 		closeTo: 123456789987654321e95
 		precision: epsilon.
 	self
@@ -501,45 +477,45 @@ ContainerTest >> testIncomeLargeInteger [
 ]
 
 { #category : #'tests - income' }
-ContainerTest >> testIncomeNotNumbers [
-	self assert: (container income: Float infinity) equals: 0.
-	self assert: container income isZero.
-	self assert: (container income: Float nan) equals: 0.
-	self assert: container income isZero.
-	self assert: (container income: '12') equals: 0.
-	self assert: container income isZero.
-	self assert: (container income: nil) equals: 0.
-	self assert: container income isZero.
-	self assert: (container income: true) equals: 0.
+ContainerTest >> testIncomeNotNumbersBoolean [
+
+	self assert: (container addIncome: true) equals: 0.
 	self assert: container income isZero
 ]
 
 { #category : #'tests - income' }
-ContainerTest >> testIncomeReturnsNewTotalCapital [
-	"float"
+ContainerTest >> testIncomeNotNumbersInfinity [
+	self assert: (container addIncome: Float infinity) equals: 0.
+	self assert: container income isZero.
+]
 
-	self
-		assert: (container income: randomFloat)
-		closeTo: randomFloat
-		precision: epsilon.
+{ #category : #'tests - income' }
+ContainerTest >> testIncomeNotNumbersNan [
 
-	"positive integer"
-	self
-		assert: (container income: randomInteger1)
-		equals: randomInteger1.
+	self assert: (container addIncome: Float nan) equals: 0.
+	self assert: container income isZero
+]
 
-	"negative integer"
-	self
-		assert: (container income: randomInteger2 negated)
-		equals: randomInteger2 negated
+{ #category : #'tests - income' }
+ContainerTest >> testIncomeNotNumbersNil [
+
+	self assert: (container addIncome: nil) equals: 0.
+	self assert: container income isZero
+]
+
+{ #category : #'tests - income' }
+ContainerTest >> testIncomeNotNumbersString [
+
+	self assert: (container addIncome: '12') equals: 0.
+	self assert: container income isZero
 ]
 
 { #category : #'tests - subcontainers' }
 ContainerTest >> testIncomeWithSubcontainers [
-	container income: randomInteger1.
-	container1 income: randomInteger2.
-	container2 income: randomFloat.
-	container3 income: randomInteger3.
+	container addIncome: randomInteger1.
+	container1 addIncome: randomInteger2.
+	container2 addIncome: randomFloat.
+	container3 addIncome: randomInteger3.
 	container addSubcontainer: container2.
 	container addSubcontainer: container1.
 	container2 addSubcontainer: container3.
@@ -553,8 +529,8 @@ ContainerTest >> testIncomeWithSubcontainers [
 
 { #category : #'tests - subcontainers' }
 ContainerTest >> testIncomeWithoutSubcontainers [
-	container income: randomInteger1.
-	container1 income: randomInteger2.
+	container addIncome: randomInteger1.
+	container1 addIncome: randomInteger2.
 	self assert: container income equals: randomInteger1.
 	self assert: container1 income equals: randomInteger2.
 	container addSubcontainer: container1.
@@ -566,10 +542,16 @@ ContainerTest >> testIncomeWithoutSubcontainers [
 ]
 
 { #category : #'tests - totalCapital' }
-ContainerTest >> testIntegerTotalCapital [
-	container income: randomInteger1.
-	self assert: container income equals: randomInteger1.
-	container income: randomInteger2 negated.
+ContainerTest >> testIntegerTotalCapital1 [
+
+	container addIncome: randomInteger1.
+	self assert: container income equals: randomInteger1
+]
+
+{ #category : #'tests - totalCapital' }
+ContainerTest >> testIntegerTotalCapital2 [
+
+	container addIncome: randomInteger2 negated.
 	self assert: container income equals: randomInteger2 negated
 ]
 
@@ -583,24 +565,28 @@ ContainerTest >> testName [
 ]
 
 { #category : #'tests - outcome' }
-ContainerTest >> testOutcomeEqualsTotalCapitalNegated [
-	"float"
-
-	container outcome: randomFloat.
+ContainerTest >> testOutcomeEqualsTotalCapitalNegatedFloat [
+	container addOutcome: randomFloat.
 	self
 		assert: container outcome
 		closeTo: randomFloat
 		precision: epsilon.
 	self assert: container outcome equals: container income negated.
+]
 
-	"positive integer"
-	container outcome: randomInteger1.
-	self assert: container outcome equals: randomInteger1.
-	self assert: container outcome equals: container income negated.
+{ #category : #'tests - outcome' }
+ContainerTest >> testOutcomeEqualsTotalCapitalNegatedNegativeInteger [
 
-	"negative integer"
-	container outcome: randomInteger2 negated.
+	container addOutcome: randomInteger2 negated.
 	self assert: container outcome equals: randomInteger2 negated.
+	self assert: container outcome equals: container income negated
+]
+
+{ #category : #'tests - outcome' }
+ContainerTest >> testOutcomeEqualsTotalCapitalNegatedPositiveInteger [
+
+	container addOutcome: randomInteger1.
+	self assert: container outcome equals: randomInteger1.
 	self assert: container outcome equals: container income negated
 ]
 
@@ -608,24 +594,28 @@ ContainerTest >> testOutcomeEqualsTotalCapitalNegated [
 ContainerTest >> testOutcomeFloat [
 	"Float capital"
 
-	container outcome: 0.1.
+	container addOutcome: 0.1.
 	self assert: container outcome closeTo: 1 / 10 precision: epsilon
 ]
 
 { #category : #'tests - outcome' }
-ContainerTest >> testOutcomeFractionnal [
-	"Fractional capital"
+ContainerTest >> testOutcomeFractionnal1 [
 
-	container outcome: 1 / 2.
-	self assert: container outcome closeTo: 1 / 2 precision: epsilon.
-	container outcome: 2 / 3.
+	container addOutcome: 1 / 2.
+	self assert: container outcome closeTo: 1 / 2 precision: epsilon
+]
+
+{ #category : #'tests - outcome' }
+ContainerTest >> testOutcomeFractionnal2 [
+
+	container addOutcome: 2 / 3.
 	self assert: container outcome closeTo: 2 / 3 precision: epsilon
 ]
 
 { #category : #'tests - outcome' }
 ContainerTest >> testOutcomeLargeInteger [
 	self
-		assert: (container outcome: 123456789987654321e95)
+		assert: (container addOutcome: 123456789987654321e95)
 		closeTo: 123456789987654321e95
 		precision: epsilon.
 	self
@@ -635,75 +625,67 @@ ContainerTest >> testOutcomeLargeInteger [
 ]
 
 { #category : #'tests - outcome' }
-ContainerTest >> testOutcomeNotNumbers [
-	self assert: (container outcome: Float infinity) equals: 0.
-	self assert: container outcome isZero.
-	self assert: (container outcome: Float nan) equals: 0.
-	self assert: container outcome isZero.
-	self assert: (container outcome: '12') equals: 0.
-	self assert: container outcome isZero.
-	self assert: (container outcome: nil) equals: 0.
-	self assert: container outcome isZero.
-	self assert: (container outcome: true) equals: 0.
+ContainerTest >> testOutcomeNotNumbersBoolean [
+	self assert: (container addOutcome: true) equals: 0.
 	self assert: container outcome isZero
 ]
 
 { #category : #'tests - outcome' }
-ContainerTest >> testOutcomeReturnsNewTotalCapitalNegated [
-	"Total capital is negated outcome"
+ContainerTest >> testOutcomeNotNumbersInfinity [
 
-	"float"
+	self assert: (container addOutcome: Float infinity) equals: 0.
+	self assert: container outcome isZero
+]
 
-	self
-		assert: (container outcome: randomFloat)
-		closeTo: randomFloat
-		precision: epsilon.
-	self
-		assert: container income
-		closeTo: randomFloat negated
-		precision: epsilon.
+{ #category : #'tests - outcome' }
+ContainerTest >> testOutcomeNotNumbersNan [
 
-	"positive integer"
-	self
-		assert: (container outcome: randomInteger1)
-		equals: randomInteger1.
-	self assert: container income equals: randomInteger1 negated.
+	self assert: (container addOutcome: Float nan) equals: 0.
+	self assert: container outcome isZero
+]
 
-	"negative integer"
-	self
-		assert: (container outcome: randomInteger2 negated)
-		equals: randomInteger2 negated.
-	self assert: container income equals: randomInteger2
+{ #category : #'tests - outcome' }
+ContainerTest >> testOutcomeNotNumbersNil [
+
+	self assert: (container addOutcome: nil) equals: 0.
+	self assert: container outcome isZero
+]
+
+{ #category : #'tests - outcome' }
+ContainerTest >> testOutcomeNotNumbersString [
+	self assert: (container addOutcome: '12') equals: 0.
+	self assert: container outcome isZero.
 ]
 
 { #category : #tests }
 ContainerTest >> testPrintString [
 
 	| main sub1 sub2 sub3 |
-	container income: 284.
+	container addIncome: 284.
 	self assert: container printString equals: 'a Container (284)'.
-	container income: 284.324971.
+	container addOutcome: 284.
+	container addIncome: 284.324971.
 	self assert: container printString equals: 'a Container (284.32)'.
 	main := Container named: 'main'.
 	sub1 := main addSubcontainer
 		        name: 'sub1';
 		        yourself.
-	sub1 income: 12.
+	sub1 addIncome: 12.
 	sub1 addSubcontainer
 		name: 'sub1 sub1';
-		income: 129.129.
+		addIncome: 129.129.
 	sub1 addSubcontainer name: 'sub1 sub2'.
 	sub2 := main addSubcontainer
 		        name: 'sub2';
 		        yourself.
 	sub2 addSubcontainer
 		name: 'sub2 sub1';
-		income: -1.
+		addIncome: -1.
 	sub3 := main addSubcontainer
 		        name: 'sub3';
 		        yourself.
 	sub2 addSubcontainer name: 'sub2 sub2'.
-	sub3 addSubcontainer income: 134.
+	sub3 addSubcontainer addIncome: 134.
 	self assert: main printString equals: 'main (0, 274.13 in total)
 	sub1 (12, 141.13 in total)
 		sub1 sub1 (129.13)
@@ -754,7 +736,7 @@ ContainerTest >> testRemoveEmptySubcontainers [
 	container addSubcontainer: container2.
 	container addSubcontainer.
 	subContainer2 := container2 addSubcontainer.
-	subContainer2 income: randomInteger1.
+	subContainer2 addIncome: randomInteger1.
 	container1 addSubcontainer.
 	container removeEmptySubcontainers.
 	self assert: container subcontainers equals: {container2}.
@@ -775,7 +757,7 @@ ContainerTest >> testReset [
 
 { #category : #'tests - moving' }
 ContainerTest >> testSendTo [
-	container income: randomInteger1.
+	container addIncome: randomInteger1.
 	self
 		assert: (Container move: randomInteger2 from: container to: container1)
 		equals: randomInteger2.
@@ -785,7 +767,7 @@ ContainerTest >> testSendTo [
 
 { #category : #'tests - moving' }
 ContainerTest >> testSendToSelf [
-	container income: randomInteger1.
+	container addIncome: randomInteger1.
 	self assert: container income equals: randomInteger1.
 	self
 		assert: (Container move: randomInteger2 from: container to: container)
@@ -796,7 +778,7 @@ ContainerTest >> testSendToSelf [
 { #category : #'tests - moving' }
 ContainerTest >> testSendToSubcontainer [
 
-	container income: randomInteger1.
+	container addIncome: randomInteger1.
 	container addSubcontainer: (container1
 			 name: 'existing container';
 			 yourself).
@@ -834,8 +816,8 @@ ContainerTest >> testShouldNotRemoveSubcontainersIfAnyIncomeIsNotZero [
 
 	container addSubcontainer: container1.
 	container1 addSubcontainer: container2.
-	container1 income: randomInteger1.
-	container2 income: randomInteger1 negated.
+	container1 addIncome: randomInteger1.
+	container2 addIncome: randomInteger1 negated.
 	container removeEmptySubcontainers.
 	self assert: container subcontainers equals: { container1 }.
 	self assert: container1 subcontainers equals: { container2 }
