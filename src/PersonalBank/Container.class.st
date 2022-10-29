@@ -72,7 +72,7 @@ Container >> addIncome: aNumber [
 		  ifTrue: [ 
 			  | old |
 			  old := self income.
-			  incomes addLast: (self class exactValueFor: aNumber).
+			  self basicAddIncome: (self class exactValueFor: aNumber).
 			  ^ self income - old ]
 		  ifFalse: [ 0 ]
 ]
@@ -104,6 +104,13 @@ Container >> addSubcontainerNamed: aString [
 	^ self addSubcontainer: (self class named: aString)
 ]
 
+{ #category : #'adding/removing' }
+Container >> basicAddIncome: aNumber [
+
+	incomes addLast: aNumber.
+	income := income + aNumber
+]
+
 { #category : #testing }
 Container >> hasEmptySubcontainers [
 
@@ -118,7 +125,8 @@ Container >> hash [
 { #category : #accessing }
 Container >> income [
 
-	^ incomes ifEmpty: [ 0 ] ifNotEmpty: [ :list | list sum ]
+	^ income
+	"^ incomes ifEmpty: [ 0 ] ifNotEmpty: [ :list | list sum ]"
 ]
 
 { #category : #initialization }
@@ -226,6 +234,7 @@ Container >> removeSubcontainer: aContainer [
 Container >> reset [
 
 	incomes := OrderedCollection new.
+	income := 0.
 	subcontainers := IdentitySet new
 ]
 
