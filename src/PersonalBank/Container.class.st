@@ -10,6 +10,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'income',
+		'incomes',
 		'subcontainers',
 		'name'
 	],
@@ -64,14 +65,16 @@ Container >> = anObject [
 
 { #category : #'adding/removing' }
 Container >> addIncome: aNumber [
+
 	"Increment myself by aNumber"
 
 	^ (self class canStore: aNumber)
-		ifTrue: [ | old |
-			old := self income.
-			self income: self income + (self class exactValueFor: aNumber).
-			^ self income - old ]
-		ifFalse: [ 0 ]
+		  ifTrue: [ 
+			  | old |
+			  old := self income.
+			  incomes addLast: (self class exactValueFor: aNumber).
+			  ^ self income - old ]
+		  ifFalse: [ 0 ]
 ]
 
 { #category : #'adding/removing' }
@@ -114,19 +117,8 @@ Container >> hash [
 
 { #category : #accessing }
 Container >> income [
-	"Current capital"
 
-	^ income
-]
-
-{ #category : #accessing }
-Container >> income: aNumber [
-
-	"Set my contents to aNumber"
-
-	^ (self class canStore: aNumber)
-		  ifTrue: [ income := self class exactValueFor: aNumber ]
-		  ifFalse: [ self income ]
+	^ incomes ifEmpty: [ 0 ] ifNotEmpty: [ :list | list sum ]
 ]
 
 { #category : #initialization }
@@ -156,15 +148,6 @@ Container >> outcome [
 	"Capital, negated"
 
 	^ self income negated
-]
-
-{ #category : #accessing }
-Container >> outcome: aNumber [
-	"Set my contents to aNumber negated"
-
-	^ (self class canStore: aNumber)
-		ifTrue: [ (self income: aNumber negated) negated ]
-		ifFalse: [ self outcome ]
 ]
 
 { #category : #printing }
@@ -241,7 +224,8 @@ Container >> removeSubcontainer: aContainer [
 
 { #category : #initialization }
 Container >> reset [
-	income := 0.
+
+	incomes := OrderedCollection new.
 	subcontainers := IdentitySet new
 ]
 
