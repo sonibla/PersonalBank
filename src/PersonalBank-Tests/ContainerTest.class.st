@@ -13,8 +13,6 @@ Class {
 { #category : #running }
 ContainerTest >> setUp [
 
-	"Hooks that subclasses may override to define the fixture of test."
-
 	super setUp.
 	container := Container new.
 	container1 := Container new.
@@ -208,6 +206,20 @@ ContainerTest >> testAddIncomeRandomFloat [
 ]
 
 { #category : #'tests - addOutcome' }
+ContainerTest >> testAddOutcomeFloat [
+
+	container addOutcome: 0.1 on: randomDate.
+	self
+		assert: (container addOutcome: 0.2 on: randomDate)
+		closeTo: 0.2
+		precision: epsilon.
+	self
+		assert: (container valuationOn: randomDate)
+		closeTo: 0.3 negated
+		precision: epsilon
+]
+
+{ #category : #'tests - addOutcome' }
 ContainerTest >> testAddOutcomeFractionnal1 [
 
 	"Positive"
@@ -288,6 +300,28 @@ ContainerTest >> testAddOutcomeNegativeInteger [
 ]
 
 { #category : #'tests - addOutcome' }
+ContainerTest >> testAddOutcomeOnDifferentDates [
+
+	container addOutcome: randomInteger1 on: randomDate.
+	container addOutcome: randomInteger2 on: (randomDate addMonths: 1).
+	container addOutcome: randomInteger3 on: (randomDate addMonths: 2).
+	self
+		assert: (container valuationOn: (randomDate addDays: -1))
+		equals: 0.
+	self
+		assert: (container valuationOn: randomDate)
+		equals: randomInteger1 negated.
+	self
+		assert:
+		(container valuationOn: ((randomDate addMonths: 1) addDays: 2))
+		equals: (randomInteger1 + randomInteger2) negated.
+	self
+		assert:
+		(container valuationOn: ((randomDate addMonths: 2) addDays: 5))
+		equals: (randomInteger1 + randomInteger2 + randomInteger3) negated
+]
+
+{ #category : #'tests - addOutcome' }
 ContainerTest >> testAddOutcomePositiveInteger [
 
 	"Add a positive outcome (addOutcome: returns outcome amount)"
@@ -308,37 +342,17 @@ ContainerTest >> testAddOutcomePositiveInteger [
 ]
 
 { #category : #'tests - addOutcome' }
-ContainerTest >> testAddOutomeFloat [
+ContainerTest >> testAddOutcomeRandomFloat [
 
-	container addOutcome: 0.1 on: randomDate.
+	container addOutcome: randomFloat on: randomDate.
 	self
-		assert: (container addOutcome: 0.2 on: randomDate)
-		closeTo: 0.2
+		assert: (container addOutcome: randomPositive on: randomDate)
+		closeTo: randomPositive
 		precision: epsilon.
 	self
 		assert: (container valuationOn: randomDate)
-		closeTo: 0.3 negated
-		precision: epsilon.
-	self
-		assert: (container
-				 addOutcome: 153.18615 on: randomDate;
-				 valuationOn: randomDate)
-		closeTo: -3 / 10 - (15318615 / 100000)
-		precision: epsilon.
-	self
-		assert: (container
-				 addOutcome: 51.77202372819618 on: randomDate;
-				 valuationOn: randomDate)
-		closeTo: -3 / 10 - (15318615 / 100000)
-			- 51.77202372819618 asMinimalDecimalFraction
-		precision: epsilon.
-	self
-		assert: (container
-				 addOutcome: randomFloat on: randomDate;
-				 valuationOn: randomDate)
-		closeTo: -3 / 10 - (15318615 / 100000)
-			- 51.77202372819618 asMinimalDecimalFraction
-			- randomFloat asMinimalDecimalFraction
+		closeTo: (randomFloat asMinimalDecimalFraction
+			 + randomPositive asMinimalDecimalFraction) negated
 		precision: epsilon
 ]
 
@@ -606,6 +620,24 @@ ContainerTest >> testIntegerTotalCapital2 [
 	self
 		assert: (container valuationOn: randomDate)
 		equals: randomInteger2 negated
+]
+
+{ #category : #tests }
+ContainerTest >> testIsEmpty [
+
+	self assert: container isEmpty.
+	container addIncome: 0 on: randomDate.
+	self deny: container isEmpty
+]
+
+{ #category : #tests }
+ContainerTest >> testIsEmpty1 [
+
+	self assert: container isEmpty.
+	container addSubcontainer.
+	self assert: container isEmpty.
+	container subcontainers anyOne addIncome: 0 on: randomDate.
+	self deny: container isEmpty
 ]
 
 { #category : #tests }

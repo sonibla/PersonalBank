@@ -22,6 +22,21 @@ IncomeTest >> testCanUseAsAmount [
 	self assert: (Income canUseAsAmount: true) equals: false
 ]
 
+{ #category : #test }
+IncomeTest >> testEqualsSign [
+
+	self
+		assert: (Income of: randomInteger1 on: randomDate)
+		equals: (Income of: randomInteger1 on: randomDate).
+	self
+		deny: (Income of: randomInteger1 on: randomDate)
+		equals:
+		(Income of: randomInteger1 on: (randomDate addDays: randomInteger2)).
+	self
+		deny: (Income of: randomInteger1 on: randomDate)
+		equals: (Income of: randomInteger1 + randomInteger2 on: randomDate)
+]
+
 { #category : #tests }
 IncomeTest >> testExactValueFor [
 	self
@@ -33,4 +48,20 @@ IncomeTest >> testExactValueFor [
 	self
 		assert: (Income exactValueFor: Float infinity)
 		equals: Float infinity
+]
+
+{ #category : #test }
+IncomeTest >> testIsEffectiveOn [
+
+	self deny:
+		((Income of: randomInteger1 on: randomDate) isEffectiveOn:
+			 (randomDate addDays: -1)).
+
+	self assert:
+		((Income of: randomInteger1 on: randomDate) isEffectiveOn:
+			 randomDate).
+
+	self assert:
+		((Income of: randomInteger1 on: randomDate) isEffectiveOn:
+			 (randomDate addDays: 1))
 ]
