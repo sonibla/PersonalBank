@@ -95,7 +95,9 @@ AccounterProcessorTest >> testSanityIssueNegativeCapitalAfterBudgetTransfer [
 	self deny: self dummyAccounter processor negativeCapitals.
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (BudgetTransferOperation
-			                    on: (Date newDay: 4 month: 1 year: 2000)
+			                    on:
+			                    (Date newDay: 4 month: 1 year: 2000)
+				                    translateToUTC
 			                    change: 'Budget1' -> 500 -> 'Budget1-SubA') ].
 	operationToEdit amount: 600.
 	self assert: self dummyAccounter processor negativeCapitals
@@ -108,7 +110,9 @@ AccounterProcessorTest >> testSanityIssueNegativeCapitalAfterOutcome [
 	self deny: self dummyAccounter processor negativeCapitals.
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (OutcomeOperation
-			                    on: (Date newDay: 2 month: 1 year: 2000)
+			                    on:
+			                    (Date newDay: 2 month: 1 year: 2000)
+				                    translateToUTC
 			                    change: 'Budget1' -> 200 -> 'Destination1'
 			                    bank: 'Bank1') ].
 	operationToEdit amount: 300.
@@ -122,7 +126,9 @@ AccounterProcessorTest >> testSanityIssueNegativeCapitalInBank [
 	self deny: self dummyAccounter processor negativeCapitals.
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (BankTransferOperation
-			                    on: (Date newDay: 3 month: 1 year: 2000)
+			                    on:
+			                    (Date newDay: 3 month: 1 year: 2000)
+				                    translateToUTC
 			                    change: 'Bank1' -> 420 -> 'Bank2') ].
 	operationToEdit amount: 3000.
 	self assert: self dummyAccounter processor negativeCapitals
@@ -135,7 +141,9 @@ AccounterProcessorTest >> testSanityIssuePartialSplit [
 	self deny: self dummyAccounter processor partialSplits.
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (BudgetTransferOperation
-			                    on: (Date newDay: 4 month: 1 year: 2000)
+			                    on:
+			                    (Date newDay: 4 month: 1 year: 2000)
+				                    translateToUTC
 			                    change: 'Budget1' -> 500 -> 'Budget1-SubA') ].
 	operationToEdit amount: 400.
 	self assert: self dummyAccounter processor partialSplits

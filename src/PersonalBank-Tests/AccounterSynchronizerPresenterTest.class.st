@@ -53,14 +53,18 @@ AccounterSynchronizerPresenterTest >> testSanityIssuesString [
 	self assert: presenter sanityIssuesString equals: ''.
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (BudgetTransferOperation
-			                    on: (Date newDay: 4 month: 1 year: 2000)
+			                    on:
+			                    (Date newDay: 4 month: 1 year: 2000)
+				                    translateToUTC
 			                    change: 'Budget1' -> 500 -> 'Budget1-SubA') ].
 	operationToEdit amount: 400.
 	self assert: presenter sanityIssuesString equals: 'partialSplits
 '.
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (BankTransferOperation
-			                    on: (Date newDay: 3 month: 1 year: 2000)
+			                    on:
+			                    (Date newDay: 3 month: 1 year: 2000)
+				                    translateToUTC
 			                    change: 'Bank1' -> 420 -> 'Bank2') ].
 	operationToEdit amount: 3000.
 	self assert: presenter sanityIssuesString equals: 'negativeCapitals
@@ -68,7 +72,9 @@ partialSplits
 '.
 	operationToEdit := self dummyAccounter operations detect: [ :each | 
 		                   each = (BudgetTransferOperation
-			                    on: (Date newDay: 4 month: 1 year: 2000)
+			                    on:
+			                    (Date newDay: 4 month: 1 year: 2000)
+				                    translateToUTC
 			                    change: 'Budget1' -> 400 -> 'Budget1-SubA') ].
 	operationToEdit amount: 500.
 	self assert: presenter sanityIssuesString equals: 'negativeCapitals

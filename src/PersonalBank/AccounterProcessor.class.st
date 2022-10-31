@@ -59,14 +59,16 @@ AccounterProcessor class >> sortedOperationsFromAccounter: anAccounter [
 { #category : #testing }
 AccounterProcessor >> bankAndBudgetsEqualCapitals [
 
-	^ self banks totalIncome = self budgets totalIncome
+	^ (self banks valuationWithSubcontainersOn: Date today)
+	  = (self budgets valuationWithSubcontainersOn: Date today)
 ]
 
 { #category : #accessing }
 AccounterProcessor >> bankCapitals [
 
 	^ self banks subcontainers
-		  collect: [ :each | each name -> each rounded ]
+		  collect: [ :each | 
+		  each name -> (each roundedValuationOn: Date today) ]
 		  as: Set
 ]
 
@@ -86,7 +88,8 @@ AccounterProcessor >> budgets [
 AccounterProcessor >> budgetsCapitals [
 
 	^ self budgets recursiveSubcontainersWithoutSelf
-		  collect: [ :each | each name -> each rounded ]
+		  collect: [ :each | 
+		  each name -> (each roundedValuationOn: Date today) ]
 		  as: Set
 ]
 
@@ -145,13 +148,22 @@ AccounterProcessor >> generateBudgetCapitalDiagram [
 	| sankey |
 	sankey := RSSankey withAllAssociations:
 		          ((budgets recursiveSubcontainersWithoutSelf reject: [ :e | 
-			            e roundedTotal isZero ]) flatCollect: [ :each | 
+			            (e roundedValuationWithSubcontainersOn: Date today)
+				            isZero ]) flatCollect: [ :each | 
 			           each subcontainers
-				           reject: [ :e | e roundedTotal isZero ]
+				           reject: [ :e | 
+				           (e roundedValuationWithSubcontainersOn: Date today)
+					           isZero ]
 				           thenCollect: [ :eachSub | 
-				           each name -> eachSub roundedTotal -> eachSub name ] ])
+					           each name
+					           ->
+					           (eachSub roundedValuationWithSubcontainersOn:
+						            Date today) -> eachSub name ] ])
 		          , (budgets subcontainers collect: [ :each | 
-				           'Total' -> each roundedTotal -> each name ]).
+				           'Total'
+				           ->
+				           (each roundedValuationWithSubcontainersOn: Date today)
+				           -> each name ]).
 	sankey boxShape @ (RSPopup new
 		 model: #yourself;
 		 text: [ :box | box model , ' - ' , box value asString ];
@@ -186,7 +198,7 @@ AccounterProcessor >> initialize [
 AccounterProcessor >> negativeCapitalIn: aContainer [
 
 	^ aContainer recursiveSubcontainers anySatisfy: [ :each | 
-		  each income negative ]
+		  (each valuationOn: Date today) negative ]
 ]
 
 { #category : #testing }
@@ -206,7 +218,8 @@ AccounterProcessor >> operations [
 AccounterProcessor >> partialSplitIn: aContainer [
 
 	^ aContainer recursiveSubcontainers anySatisfy: [ :each | 
-		  each subcontainers notEmpty and: [ each income isZero not ] ]
+		  each subcontainers notEmpty and: [ 
+			  (each valuationOn: Date today) isZero not ] ]
 ]
 
 { #category : #testing }
@@ -249,6 +262,7 @@ AccounterProcessor >> registerBankTransfer: anOperation [
 	(banks subcontainerNamed: anOperation source)
 		send: anOperation amount
 		to: (banks subcontainerNamed: anOperation destination)
+		on: anOperation date
 ]
 
 { #category : #processing }
@@ -258,32 +272,38 @@ AccounterProcessor >> registerBudgetTransfer: anOperation [
 	sourceBudget := budgets recursiveSubcontainerNamed:
 		                anOperation source.
 	destinationCandidates := budgets recursiveSubcontainersNamed:
-		              anOperation destination.
+		                         anOperation destination.
 	destionationBudget := destinationCandidates size = 1
 		                      ifTrue: [ destinationCandidates anyOne ]
 		                      ifFalse: [ 
 		                      sourceBudget subcontainerNamed:
 			                      anOperation destination ].
-	sourceBudget send: anOperation amount to: destionationBudget
+	sourceBudget
+		send: anOperation amount
+		to: destionationBudget
+		on: anOperation date
 ]
 
 { #category : #processing }
 AccounterProcessor >> registerIncome: anOperation [
 
-	(banks subcontainerNamed: anOperation bank) addIncome:
-		anOperation amount.
-	(budgets recursiveSubcontainerNamed: anOperation destination) 
+	(banks subcontainerNamed: anOperation bank)
 		addIncome: anOperation amount
+		on: anOperation date.
+	(budgets recursiveSubcontainerNamed: anOperation destination)
+		addIncome: anOperation amount
+		on: anOperation date
 ]
 
 { #category : #processing }
 AccounterProcessor >> registerOutcome: anOperation [
 
-	(banks subcontainerNamed: anOperation bank) addOutcome:
-		anOperation amount.
-
-	(budgets recursiveSubcontainerNamed: anOperation source) addOutcome:
-		anOperation amount
+	(banks subcontainerNamed: anOperation bank)
+		addOutcome: anOperation amount
+		on: anOperation date.
+	(budgets recursiveSubcontainerNamed: anOperation source)
+		addOutcome: anOperation amount
+		on: anOperation date
 ]
 
 { #category : #initialization }

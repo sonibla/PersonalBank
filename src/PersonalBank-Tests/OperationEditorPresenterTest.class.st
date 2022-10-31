@@ -59,7 +59,7 @@ OperationEditorPresenterTest >> testAddOperations [
 	self assert: presenter operationList size equals: 1.
 	self assert: presenter operationsTable items size equals: 1.
 	self assert: presenter operationList first equals: (IncomeOperation
-			 on: (Date newDay: 2 month: 8 year: 2001)
+			 on: (Date newDay: 2 month: 8 year: 2001) translateToUTC
 			 from: 'SOURCE'
 			 to: 'DESTINATION'
 			 of: 42
@@ -76,7 +76,7 @@ OperationEditorPresenterTest >> testAddOperations [
 		assert: presenter operationsTable items
 		equals: presenter operationList.
 	self assert: presenter operationList first equals: (IncomeOperation
-			 on: (Date newDay: 2 month: 8 year: 2001)
+			 on: (Date newDay: 2 month: 8 year: 2001) translateToUTC
 			 from: 'SOURCE'
 			 to: 'DESTINATION'
 			 of: 42
@@ -255,12 +255,12 @@ OperationEditorPresenterTest >> testStaysSortedAfterEdit [
 	self
 		deny: presenter operationsTable selectedItem
 		equals: ((self dummyOperations at: 3) date:
-				 (Date newDay: 19 month: 1 year: 2021)).
+				 (Date newDay: 19 month: 1 year: 2021) translateToUTC).
 
 	presenter unselectAll.
 	presenter operationsTable selectIndex: 10.
 	self
 		assert: presenter operationsTable selectedItem
 		equals: ((self dummyOperations at: 2) date:
-				 (Date newDay: 19 month: 1 year: 2021))
+				 (Date newDay: 19 month: 1 year: 2021) translateToUTC)
 ]

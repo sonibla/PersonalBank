@@ -45,10 +45,7 @@ Operation >> amount [
 { #category : #accessing }
 Operation >> amount: anObject [
 
-	| unChanged |
-	unChanged := anObject = amount.
-	amount := anObject.
-	unChanged ifFalse: [ self changed: #amount ]
+	self setInstVarNamed: #amount to: anObject
 ]
 
 { #category : #accessing }
@@ -60,10 +57,7 @@ Operation >> bank [
 { #category : #accessing }
 Operation >> bank: anObject [
 
-	| unChanged |
-	unChanged := anObject = bank.
-	bank := anObject.
-	unChanged ifFalse: [ self changed: #bank ]
+	self setInstVarNamed: #bank to: anObject
 ]
 
 { #category : #copying }
@@ -88,10 +82,7 @@ Operation >> date [
 { #category : #accessing }
 Operation >> date: anObject [
 
-	| unChanged |
-	unChanged := anObject = date.
-	date := anObject.
-	unChanged ifFalse: [ self changed: #date ]
+	self setInstVarNamed: #date to: anObject
 ]
 
 { #category : #accessing }
@@ -103,10 +94,7 @@ Operation >> destination [
 { #category : #accessing }
 Operation >> destination: anObject [
 
-	| unChanged |
-	unChanged := anObject = destination.
-	destination := anObject.
-	unChanged ifFalse: [ self changed: #destination ]
+	self setInstVarNamed: #destination to: anObject
 ]
 
 { #category : #comparing }
@@ -192,6 +180,18 @@ Operation >> printTypeOn: aStream [
 		aStream << ')' ]
 ]
 
+{ #category : #private }
+Operation >> setInstVarNamed: instVarName to: anObject [
+
+	"I know, it's ugly. I did this to avoid code duplication"
+
+	| unChanged instVarValue |
+	instVarValue := self instVarNamed: instVarName.
+	unChanged := anObject = instVarValue.
+	self instVarNamed: instVarName put: anObject.
+	unChanged ifFalse: [ self changed: instVarName ]
+]
+
 { #category : #accessing }
 Operation >> source [
 
@@ -201,10 +201,7 @@ Operation >> source [
 { #category : #accessing }
 Operation >> source: anObject [
 
-	| unChanged |
-	unChanged := anObject = source.
-	source := anObject.
-	unChanged ifFalse: [ self changed: #source ]
+	self setInstVarNamed: #source to: anObject
 ]
 
 { #category : #accessing }
@@ -216,8 +213,5 @@ Operation >> type [
 { #category : #accessing }
 Operation >> type: anObject [
 
-	| unChanged |
-	unChanged := anObject = type.
-	type := anObject.
-	unChanged ifFalse: [ self changed: #type ]
+	self setInstVarNamed: #type to: anObject
 ]

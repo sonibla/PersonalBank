@@ -7,45 +7,14 @@ For the Collaborators Part: I store my contents as a Number
 "
 Class {
 	#name : #Container,
-	#superclass : #Object,
+	#superclass : #MoneyStorage,
 	#instVars : [
-		'income',
 		'incomes',
 		'subcontainers',
 		'name'
 	],
 	#category : #'PersonalBank-Core'
 }
-
-{ #category : #testing }
-Container class >> canStore: anObject [
-	"Chack that anObject can be stored into myself"
-
-	^ anObject isNumber
-		and: [ anObject isNaN not and: [ anObject isInfinite not ] ]
-]
-
-{ #category : #computing }
-Container class >> exactValueFor: aNumber [
-	"Converts floats to fractions to have an exact representation of them"
-
-	^ (aNumber isFloat and: [ (aNumber isNil | aNumber isInfinite) not ])
-		ifTrue: [ aNumber asMinimalDecimalFraction ]
-		ifFalse: [ aNumber ]
-]
-
-{ #category : #'adding/removing' }
-Container class >> move: aNumber from: transmitterAccount to: receiverAccount [
-	"Transfer funds between 2 containers"
-
-	| bank sent |
-	bank := self new.
-	bank addIncome: (transmitterAccount addOutcome: aNumber).
-	sent := bank addOutcome: (receiverAccount addIncome: bank income).
-	bank addOutcome: (transmitterAccount addIncome: bank income).
-	self assert: [ bank income isZero ].
-	^ sent
-]
 
 { #category : #'instance creation' }
 Container class >> named: aString [
@@ -58,32 +27,20 @@ Container class >> named: aString [
 { #category : #comparing }
 Container >> = anObject [
 
-	^ self totalIncome = anObject or: [ 
-		  anObject class = self class and: [ 
-			  self totalIncome = anObject totalIncome ] ]
+	^ anObject class = self class and: [ 
+		  self incomesList asSet = anObject incomesList asSet ]
 ]
 
 { #category : #'adding/removing' }
-Container >> addIncome: aNumber [
+Container >> addIncome: aNumber on: aDate [
 
-	"Increment myself by aNumber"
-
-	^ (self class canStore: aNumber)
-		  ifTrue: [ 
-			  | old |
-			  old := self income.
-			  self basicAddIncome: (self class exactValueFor: aNumber).
-			  ^ self income - old ]
-		  ifFalse: [ 0 ]
+	^ incomes addIncome: aNumber on: aDate
 ]
 
 { #category : #'adding/removing' }
-Container >> addOutcome: aNumber [
-	"Decrement myself by aNumber"
+Container >> addOutcome: aNumber on: aDate [
 
-	^ (self class canStore: aNumber)
-		ifTrue: [ (self addIncome: aNumber negated) negated ]
-		ifFalse: [ 0 ]
+	^ incomes addOutcome: aNumber on: aDate
 ]
 
 { #category : #'adding/removing' }
@@ -104,13 +61,6 @@ Container >> addSubcontainerNamed: aString [
 	^ self addSubcontainer: (self class named: aString)
 ]
 
-{ #category : #'adding/removing' }
-Container >> basicAddIncome: aNumber [
-
-	incomes addLast: aNumber.
-	income := income + aNumber
-]
-
 { #category : #testing }
 Container >> hasEmptySubcontainers [
 
@@ -119,25 +69,28 @@ Container >> hasEmptySubcontainers [
 
 { #category : #comparing }
 Container >> hash [
-	^ self totalIncome hash
+
+	^ self incomesList asSet hash
 ]
 
 { #category : #accessing }
-Container >> income [
+Container >> incomesList [
 
-	^ income
+	^ incomes incomesList
 ]
 
 { #category : #initialization }
 Container >> initialize [
+
 	super initialize.
+	name := ''.
 	self reset
 ]
 
 { #category : #testing }
 Container >> isEmpty [
 
-	^ self totalIncome isZero and: [ self income isZero ]
+	^ self recursiveSubcontainers allSatisfy: #noIncomes
 ]
 
 { #category : #accessing }
@@ -150,32 +103,43 @@ Container >> name: aString [
 	name := aString
 ]
 
-{ #category : #accessing }
-Container >> outcome [
-	"Capital, negated"
+{ #category : #testing }
+Container >> noIncomes [
 
-	^ self income negated
+	^ incomes isEmpty
 ]
 
 { #category : #printing }
 Container >> printOn: aStream [
 
-	self printStringTabulatedBy: 1 on: aStream
+	self printValuationOn: Date today onStream: aStream
 ]
 
 { #category : #printing }
-Container >> printStringTabulatedBy: tabulations on: aStream [
+Container >> printStringTabulatedBy: tabulations on: aDate onStream: aStream [
 
 	self name
 		ifNil: [ super printOn: aStream ]
 		ifNotNil: [ aStream nextPutAll: self name ].
 	aStream
 		nextPutAll: ' (';
-		nextPutAll: self rounded asString;
+		nextPutAll: (self roundedValuationOn: aDate) asString;
 		nextPutAll: (self subcontainers isEmpty
 				 ifTrue: [ ')' ]
-				 ifFalse: [ ', ' , self roundedTotal asString , ' in total)' ]).
-	self subContainersPrintStringTabulatedBy: tabulations on: aStream
+				 ifFalse: [ 
+					 ', '
+					 , (self roundedValuationWithSubcontainersOn: aDate) asString
+					 , ' in total)' ]).
+	self
+		subContainersPrintStringTabulatedBy: tabulations
+		on: aDate
+		onStream: aStream
+]
+
+{ #category : #printing }
+Container >> printValuationOn: aDate onStream: aStream [
+
+	self printStringTabulatedBy: 1 on: aDate onStream: aStream
 ]
 
 { #category : #accessing }
@@ -232,47 +196,37 @@ Container >> removeSubcontainer: aContainer [
 { #category : #initialization }
 Container >> reset [
 
-	incomes := OrderedCollection new.
-	income := 0.
+	incomes := IncomeCollection new.
 	subcontainers := IdentitySet new
 ]
 
 { #category : #printing }
-Container >> rounded [
-	| rounded |
-	rounded := self income asFloat round: 2.
-	^ rounded = rounded asInteger
-		ifTrue: [ rounded asInteger ]
-		ifFalse: [ rounded ]
-]
+Container >> roundedValuationWithSubcontainersOn: aDate [
 
-{ #category : #printing }
-Container >> roundedTotal [
 	| rounded |
-	rounded := self totalIncome asFloat round: 2.
+	rounded := (self valuationWithSubcontainersOn: aDate) asFloat round:
+		           2.
 	^ rounded = rounded asInteger
-		ifTrue: [ rounded asInteger ]
-		ifFalse: [ rounded ]
+		  ifTrue: [ rounded asInteger ]
+		  ifFalse: [ rounded ]
 ]
 
 { #category : #moving }
-Container >> send: aNumber to: aContainer [
-	^ self class move: aNumber from: self to: aContainer
-]
+Container >> send: aNumber toSubcontainerNamed: aString on: aDate [
 
-{ #category : #moving }
-Container >> send: aNumber toSubcontainerNamed: aString [
-
-	^ self send: aNumber to: (self subcontainerNamed: aString)
+	^ self send: aNumber to: (self subcontainerNamed: aString) on: aDate
 ]
 
 { #category : #printing }
-Container >> subContainersPrintStringTabulatedBy: tabulations on: aStream [
+Container >> subContainersPrintStringTabulatedBy: tabulations on: aDate onStream: aStream [
 
 	self subcontainers do: [ :each | 
 		aStream cr.
 		tabulations timesRepeat: [ aStream tab ].
-		each printStringTabulatedBy: tabulations + 1 on: aStream ]
+		each
+			printStringTabulatedBy: tabulations + 1
+			on: aDate
+			onStream: aStream ]
 ]
 
 { #category : #accessing }
@@ -285,8 +239,8 @@ Container >> subcontainerNamed: aString [
 
 { #category : #accessing }
 Container >> subcontainers [
-	^ subcontainers asArray
-		sorted: [ :a :b | a totalIncome > b totalIncome ]
+
+	^ subcontainers asArray sorted: [ :a :b | a name > b name ]
 ]
 
 { #category : #accessing }
@@ -304,16 +258,21 @@ Container >> subcontainersTree [
 ]
 
 { #category : #accessing }
-Container >> totalIncome [
-	"Current capital"
-
-	^ (self recursiveSubcontainers sum: #income)
-]
-
-{ #category : #accessing }
 Container >> uniqueElementOf: aCollection [
 
 	aCollection size > 1 ifTrue: [ self error: 'Ambiguous' ].
 	aCollection isEmpty ifTrue: [ self error: 'Empty' ].
 	^ aCollection anyOne
+]
+
+{ #category : #accessing }
+Container >> valuationOn: aDate [
+
+	^ incomes valuationOn: aDate
+]
+
+{ #category : #accessing }
+Container >> valuationWithSubcontainersOn: aDate [
+
+	^ self recursiveSubcontainers sum: [ :each | each valuationOn: aDate ]
 ]

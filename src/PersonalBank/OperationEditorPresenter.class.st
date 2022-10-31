@@ -387,7 +387,7 @@ OperationEditorPresenter >> submitEditedOperationInto: anOperation [
 		  source: source text;
 		  type: type selectedItem;
 		  bank: bank text;
-		  date: (Date readFrom: date text pattern: 'd/m/y');
+		  date: (Date readFrom: date text pattern: 'd/m/y') translateToUTC;
 		  amount: amount number;
 		  destination: destination text;
 		  yourself
