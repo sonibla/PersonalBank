@@ -39,6 +39,19 @@ IncomeCollection >> incomeClass [
 ]
 
 { #category : #accessing }
+IncomeCollection >> incomesEffectiveOn: aDate [
+
+	^ Array new: incomes size streamContents: [ :stream | 
+		  | index |
+		  index := 1.
+		  [ 
+		  index <= incomes size and: [ 
+			  (incomes at: index) isEffectiveOn: aDate ] ] whileTrue: [ 
+			  stream nextPut: (incomes at: index).
+			  index := index + 1 ] ]
+]
+
+{ #category : #accessing }
 IncomeCollection >> incomesList [
 
 	^ incomes
@@ -47,7 +60,10 @@ IncomeCollection >> incomesList [
 { #category : #initialization }
 IncomeCollection >> initialize [
 
-	incomes := OrderedCollection new
+	incomes := SortedCollection sortBlock: [ :a :b | 
+		           a date = b date
+			           ifTrue: [ a amount < b amount ]
+			           ifFalse: [ a date < b date ] ]
 ]
 
 { #category : #testing }
@@ -59,6 +75,6 @@ IncomeCollection >> isEmpty [
 { #category : #accessing }
 IncomeCollection >> valuationOn: aDate [
 
-	^ (incomes select: [ :eachIncome | eachIncome isEffectiveOn: aDate ]) 
-		  sum: [ :eachIncome | eachIncome amount ]
+	^ (self incomesEffectiveOn: aDate) sum: [ :eachIncome | 
+		  eachIncome amount ]
 ]
