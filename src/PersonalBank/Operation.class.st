@@ -18,7 +18,7 @@ Operation class >> dummy [
 	^ self new
 		  source: '';
 		  bank: '';
-		  date: Date today;
+		  date: Date today translateToUTC;
 		  amount: 0;
 		  destination: '';
 		  type: OutcomeOperation;

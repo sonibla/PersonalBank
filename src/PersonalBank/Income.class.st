@@ -75,7 +75,7 @@ Income >> hash [
 Income >> initialize [
 
 	amount := 0.
-	date := Date fromSeconds: 0
+	date := (Date fromSeconds: 0) translateToUTC
 ]
 
 { #category : #testing }

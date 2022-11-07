@@ -132,7 +132,7 @@ OperationEditorPresenter >> copyOperations: aCollection keepingOriginalDate: sho
 		        each copy
 			        date: (shouldCopyDate
 					         ifTrue: [ each date ]
-					         ifFalse: [ Date today ]);
+					         ifFalse: [ Date today translateToUTC ]);
 			        yourself ].
 	self addOperations: copy.
 
