@@ -6,7 +6,10 @@ Class {
 		'capitalDiagram',
 		'operationEditor',
 		'accounterSynchronizer',
-		'synchronizerPresenter'
+		'synchronizerPresenter',
+		'toolBar',
+		'showAmountsButton',
+		'triggerUpdateButton'
 	],
 	#category : #'PersonalBank-GUI'
 }
@@ -15,7 +18,16 @@ Class {
 AccountingNotebookPresenter class >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
-		  add: #synchronizerPresenter expand: false;
+		  add: (SpBoxLayout newLeftToRight
+				   add: #synchronizerPresenter expand: false;
+				   add: #toolBar withConstraints: [ :constraints | 
+					   constraints
+						   padding: 5;
+						   height: 35;
+						   width: 35;
+						   expand: false ];
+				   yourself)
+		  expand: false;
 		  add: #notebook;
 		  yourself
 ]
@@ -51,10 +63,16 @@ AccountingNotebookPresenter >> initialize [
 { #category : #initialization }
 AccountingNotebookPresenter >> initializePresenters [
 
+	toolBar := self newToolbar
+		           addItem: self showAmountsButton;
+		           addItem: self triggerUpdateButton;
+		           yourself.
 	synchronizerPresenter := self instantiate:
 		                         AccounterSynchronizerPresenter new.
 	capitalDiagram := self instantiate: CapitalDiagramPresenter new.
+	capitalDiagram shouldShowAmounts: self showAmountsButton state.
 	operationEditor := self instantiate: OperationEditorPresenter new.
+	capitalDiagram shouldShowAmounts: self showAmountsButton state.
 	notebook := self newNotebook.
 
 	notebook
@@ -92,6 +110,37 @@ AccountingNotebookPresenter >> setAccounterSynchronizer: anAccounterSynchronizer
 	accounterSynchronizer addDependent: self.
 	self update: #accounter.
 	self update: #unsavedChanges
+]
+
+{ #category : #initialization }
+AccountingNotebookPresenter >> showAmountsButton [
+
+	^ showAmountsButton ifNil: [ 
+		  showAmountsButton := SpToolbarToggleButtonPresenter new
+			                       label: 'Show amounts';
+			                       icon: (self iconNamed: #smallFind);
+			                       help: 'Display amounts';
+			                       whenToggledDo: [ 
+				                       showAmountsButton ifNotNil: [ 
+						                       capitalDiagram shouldShowAmounts:
+								                       showAmountsButton state.
+						                       operationEditor shouldShowAmounts:
+								                       showAmountsButton state ] ];
+			                       state: false;
+			                       yourself ]
+]
+
+{ #category : #accessing }
+AccountingNotebookPresenter >> triggerUpdateButton [
+
+	^ triggerUpdateButton ifNil: [ 
+		  triggerUpdateButton := SpToolbarButtonPresenter new
+			                         label: 'Update';
+			                         icon: (self iconNamed: #glamorousRefresh);
+			                         help: 'Force recomputation and update';
+			                         action: [ 
+				                         self accounter changed: #operations ];
+			                         yourself ]
 ]
 
 { #category : #updating }

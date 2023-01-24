@@ -112,34 +112,43 @@ Container >> noIncomes [
 { #category : #printing }
 Container >> printOn: aStream [
 
-	self printValuationOn: Date today onStream: aStream
-]
-
-{ #category : #printing }
-Container >> printStringTabulatedBy: tabulations on: aDate onStream: aStream [
-
-	self name
-		ifNil: [ super printOn: aStream ]
-		ifNotNil: [ aStream nextPutAll: self name ].
-	aStream
-		nextPutAll: ' (';
-		nextPutAll: (self roundedValuationOn: aDate) asString;
-		nextPutAll: (self subcontainers isEmpty
-				 ifTrue: [ ')' ]
-				 ifFalse: [ 
-					 ', '
-					 , (self roundedValuationWithSubcontainersOn: aDate) asString
-					 , ' in total)' ]).
 	self
-		subContainersPrintStringTabulatedBy: tabulations
-		on: aDate
+		printValuationOn: Date today
+		hideAmounts: false
 		onStream: aStream
 ]
 
 { #category : #printing }
-Container >> printValuationOn: aDate onStream: aStream [
+Container >> printStringTabulatedBy: tabulations on: aDate hideAmounts: privacy onStream: aStream [
 
-	self printStringTabulatedBy: 1 on: aDate onStream: aStream
+	self name
+		ifNil: [ super printOn: aStream ]
+		ifNotNil: [ aStream nextPutAll: self name ].
+	privacy ifFalse: [ 
+		aStream
+			nextPutAll: ' (';
+			nextPutAll: (self roundedValuationOn: aDate) asString;
+			nextPutAll: (self subcontainers isEmpty
+					 ifTrue: [ ')' ]
+					 ifFalse: [ 
+						 ', '
+						 , (self roundedValuationWithSubcontainersOn: aDate) asString
+						 , ' in total)' ]) ].
+	self
+		subContainersPrintStringTabulatedBy: tabulations
+		on: aDate
+		hideAmounts: privacy
+		onStream: aStream
+]
+
+{ #category : #printing }
+Container >> printValuationOn: aDate hideAmounts: privacy onStream: aStream [
+
+	self
+		printStringTabulatedBy: 1
+		on: aDate
+		hideAmounts: privacy
+		onStream: aStream
 ]
 
 { #category : #accessing }
@@ -218,14 +227,17 @@ Container >> send: aNumber toSubcontainerNamed: aString on: aDate [
 ]
 
 { #category : #printing }
-Container >> subContainersPrintStringTabulatedBy: tabulations on: aDate onStream: aStream [
+Container >> subContainersPrintStringTabulatedBy: tabulations on: aDate hideAmounts: privacy onStream: aStream [
 
-	self subcontainers do: [ :each | 
+	(self subcontainers sorted: [ :a :b | 
+		 (a valuationWithSubcontainersOn: aDate)
+		 > (b valuationWithSubcontainersOn: aDate) ]) do: [ :each | 
 		aStream cr.
 		tabulations timesRepeat: [ aStream tab ].
 		each
 			printStringTabulatedBy: tabulations + 1
 			on: aDate
+			hideAmounts: privacy
 			onStream: aStream ]
 ]
 

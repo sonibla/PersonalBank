@@ -3,8 +3,6 @@ Class {
 	#superclass : #Model,
 	#instVars : [
 		'operations',
-		'bankCapitalDiagram',
-		'budgetCapitalDiagram',
 		'processor'
 	],
 	#category : #'PersonalBank-Core'
@@ -51,46 +49,6 @@ Accounter >> bankAndBudgetsEqualCapitals [
 	^ self processor bankAndBudgetsEqualCapitals
 ]
 
-{ #category : #accessing }
-Accounter >> bankCapitalDiagram [
-
-	^ bankCapitalDiagram ifNil: [ self defaultCanvasForError: false ]
-]
-
-{ #category : #accessing }
-Accounter >> bankCapitalDiagram: anObject [
-
-	bankCapitalDiagram := anObject.
-	self changed: #bankCapitalDiagram
-]
-
-{ #category : #accessing }
-Accounter >> budgetCapitalDiagram [
-
-	^ budgetCapitalDiagram ifNil: [ self defaultCanvasForError: false ]
-]
-
-{ #category : #accessing }
-Accounter >> budgetCapitalDiagram: anObject [
-
-	budgetCapitalDiagram := anObject.
-	self changed: #budgetCapitalDiagram
-]
-
-{ #category : #accessing }
-Accounter >> defaultCanvasForError: error [
-
-	| canvas |
-	canvas := RSCanvas new
-		          color: self theme backgroundColor;
-		          yourself.
-	error ifTrue: [ 
-		canvas add: ((RSLabel text: 'Error while generating diagram')
-				 color: self theme dangerTextColor;
-				 yourself) ].
-	^ canvas
-]
-
 { #category : #testing }
 Accounter >> duplicatedNames [
 
@@ -101,22 +59,6 @@ Accounter >> duplicatedNames [
 Accounter >> errorWhileProcessing [
 
 	^ self processor errorWhileProcessing
-]
-
-{ #category : #utilities }
-Accounter >> generateBankCapitalDiagram [
-
-	^ [ self processor generateBankCapitalDiagram ]
-		  on: Error
-		  do: [ self defaultCanvasForError: true ]
-]
-
-{ #category : #utilities }
-Accounter >> generateBudgetCapitalDiagram [
-
-	^ [ self processor generateBudgetCapitalDiagram ]
-		  on: Error
-		  do: [ self defaultCanvasForError: true ]
 ]
 
 { #category : #comparing }
@@ -256,8 +198,7 @@ Accounter >> setProcessor: anAccounterProcessor [
 Accounter >> update: aSymbol [
 
 	aSymbol = #processingFinished ifTrue: [ 
-		self bankCapitalDiagram: self generateBankCapitalDiagram.
-		self budgetCapitalDiagram: self generateBudgetCapitalDiagram.
+		self changed: #processingFinished.
 		self changed: #statistics ].
 
 	(#( #type #source #destination #date #bank #amount ) includes:

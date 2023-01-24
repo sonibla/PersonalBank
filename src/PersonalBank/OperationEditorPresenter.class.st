@@ -10,7 +10,8 @@ Class {
 		'date',
 		'operationBeingEdited',
 		'operationsTable',
-		'accounter'
+		'accounter',
+		'shouldShowAmounts'
 	],
 	#category : #'PersonalBank-GUI'
 }
@@ -182,6 +183,7 @@ OperationEditorPresenter >> fillFormWith: anOperation [
 OperationEditorPresenter >> initializePresenters [
 
 	accounter ifNil: [ accounter := Accounter new ].
+	shouldShowAmounts := false.
 	self instanciateOperationTable.
 	self instanciateOperationEditor.
 	self editDummyOperation
@@ -228,10 +230,13 @@ OperationEditorPresenter >> instanciateOperationTable [
 				                    title: 'Source'
 				                    evaluated: [ :eachOperation | 
 				                    eachOperation source asString ]);
-		                   addColumn: ((SpStringTableColumn
+		                   addColumn:
+			                   ((SpStringTableColumn
 				                     title: 'Amount'
 				                     evaluated: [ :eachOperation | 
-				                     eachOperation amount asString ]) width:
+					                     self shouldShowAmounts
+						                     ifTrue: [ eachOperation amount asString ]
+						                     ifFalse: [ '***' ] ]) width:
 				                    self class amountWidth);
 		                   addColumn: (SpStringTableColumn
 				                    title: 'Destination'
@@ -349,6 +354,19 @@ OperationEditorPresenter >> setAccounter: anAccounter [
 	accounter addDependent: self.
 	self editDummyOperation.
 	self update: #operations
+]
+
+{ #category : #accessing }
+OperationEditorPresenter >> shouldShowAmounts [
+
+	^ shouldShowAmounts
+]
+
+{ #category : #accessing }
+OperationEditorPresenter >> shouldShowAmounts: anObject [
+
+	shouldShowAmounts := anObject.
+	self updateTable
 ]
 
 { #category : #updating }

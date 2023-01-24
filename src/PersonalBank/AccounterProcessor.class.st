@@ -114,79 +114,6 @@ AccounterProcessor >> errorWhileProcessing [
 	^ errorWhileProcessing
 ]
 
-{ #category : #utilities }
-AccounterProcessor >> generateBankCapitalDiagram [
-
-	| data pie pieLabel |
-	data := self bankCapitals.
-	pie := RSPie new
-		       objects: data;
-		       slice: #value.
-	pie sliceShape
-		externalRadius: 240;
-		innerRadius: 170;
-		segmentSpacing: 0.4.
-	pie sliceColor: NSScale category20b.
-	pieLabel := RSPieLabeledInteraction new.
-	pieLabel labelShape fontSize: 13.
-	pieLabel labelColor:  self theme textColor.
-	pieLabel labelText: [ :obj | obj key ].
-
-	pie build.
-	pie canvas when: RSExtentChangedEvent do: [ pie canvas zoomToFit ].
-	pie shapes
-	@ (RSPopup text: [ :obj | obj key , ' - ' , obj value asString ]).
-	pie shapes @ pieLabel.
-	^ pie canvas
-		  color:  self theme backgroundColor;
-		  yourself
-]
-
-{ #category : #utilities }
-AccounterProcessor >> generateBudgetCapitalDiagram [
-
-	| sankey |
-	sankey := RSSankey withAllAssociations:
-		          ((budgets recursiveSubcontainersWithoutSelf reject: [ :e | 
-			            (e roundedValuationWithSubcontainersOn: Date today)
-				            isZero ]) flatCollect: [ :each | 
-			           each subcontainers
-				           reject: [ :e | 
-				           (e roundedValuationWithSubcontainersOn: Date today)
-					           isZero ]
-				           thenCollect: [ :eachSub | 
-					           each name
-					           ->
-					           (eachSub roundedValuationWithSubcontainersOn:
-						            Date today) -> eachSub name ] ])
-		          , (budgets subcontainers collect: [ :each | 
-				           'Total'
-				           ->
-				           (each roundedValuationWithSubcontainersOn: Date today)
-				           -> each name ]).
-	sankey boxShape @ (RSPopup new
-		 model: #yourself;
-		 text: [ :box | box model , ' - ' , box value asString ];
-		 yourself).
-	sankey boxShape
-		withBorder;
-		borderColor: self theme textColor;
-		width: 15.
-	sankey labelShape
-		color: self theme textColor;
-		fontSize: 13.
-	sankey boxColor: self theme darkBaseColor.
-	sankey lineShape color: (self theme lightBaseColor alpha: 0.5).
-	sankey
-		extent: 960 @ 500;
-		iterations: 32;
-		nodePadding: 10.
-	sankey build.
-	^ sankey canvas
-		  color: self theme backgroundColor;
-		  yourself
-]
-
 { #category : #initialization }
 AccounterProcessor >> initialize [
 
@@ -325,5 +252,5 @@ AccounterProcessor >> sortedOperations [
 { #category : #updating }
 AccounterProcessor >> update: aSymbol [
 
-	aSymbol = #operations ifTrue: [ self processDataErrorSafely]
+	aSymbol = #operations ifTrue: [ self processDataErrorSafely ]
 ]
