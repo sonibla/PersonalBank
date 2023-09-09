@@ -270,6 +270,12 @@ Container >> subcontainersTree [
 ]
 
 { #category : #accessing }
+Container >> totalValuation [
+
+	^ incomes totalValuation
+]
+
+{ #category : #accessing }
 Container >> uniqueElementOf: aCollection [
 
 	aCollection size > 1 ifTrue: [ self error: 'Ambiguous' ].

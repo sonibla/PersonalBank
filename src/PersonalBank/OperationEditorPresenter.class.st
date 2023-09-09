@@ -2,6 +2,12 @@ Class {
 	#name : #OperationEditorPresenter,
 	#superclass : #SpPresenter,
 	#instVars : [
+		'sourceFilter',
+		'destinationFilter',
+		'amountFilter',
+		'bankFilter',
+		'typeFilter',
+		'dateFilter',
 		'source',
 		'destination',
 		'amount',
@@ -32,6 +38,16 @@ OperationEditorPresenter class >> dateWidth [
 OperationEditorPresenter class >> defaultLayout [
 
 	^ SpBoxLayout newTopToBottom
+		  add: (SpBoxLayout newLeftToRight
+				   spacing: 2;
+				   add: #typeFilter width: self typeWidth;
+				   add: #dateFilter width: self dateWidth;
+				   add: #sourceFilter;
+				   add: #amountFilter width: self amountWidth;
+				   add: #destinationFilter;
+				   add: #bankFilter;
+				   yourself)
+		  height: self toolbarHeight;
 		  add: #operationsTable;
 		  add: (SpBoxLayout newLeftToRight
 				   spacing: 2;
@@ -71,9 +87,21 @@ OperationEditorPresenter >> amount [
 ]
 
 { #category : #accessing }
+OperationEditorPresenter >> amountFilter [
+
+	^ amountFilter
+]
+
+{ #category : #accessing }
 OperationEditorPresenter >> bank [
 
 	^ bank
+]
+
+{ #category : #accessing }
+OperationEditorPresenter >> bankFilter [
+
+	^ bankFilter
 ]
 
 { #category : #initialization }
@@ -82,7 +110,8 @@ OperationEditorPresenter >> connectPresenters [
 	operationsTable whenSelectionChangedDo: [ :selection | 
 		selection selectedItems size = 1
 			ifTrue: [ self editOperation: selection selectedItem ]
-			ifFalse: [ self editDummyOperation ] ].
+			ifFalse: [ self editDummyOperation ].
+		self updateSum ].
 	bank whenSubmitDo: [ :text | 
 		self submitEditedOperationClearingForm: true ].
 	destination whenSubmitDo: [ :text | 
@@ -98,6 +127,9 @@ OperationEditorPresenter >> connectPresenters [
 	type whenSelectionChangedDo: [ :selection | 
 		bank editable: selection selectedItem model bankFieldOptional not.
 		self submitEditedOperationClearingForm: false ].
+	typeFilter whenSelectionChangedDo: [ :selection | 
+		self unselectAll.
+		self updateFilteredOperations ].
 	self presenters do: [ :each | 
 		each
 			bindKeyCombination: Character escape
@@ -117,12 +149,12 @@ OperationEditorPresenter >> contextMenuItemNamed: name iconNamed: iconName actio
 		  iconName: iconName;
 		  action: [ 
 			  | selectedOperations |
-			  selectedOperations := self sortedOperations select: [ :each | 
+			  selectedOperations := self sortedFilteredOperations select: [ :each | 
 					                        operationsTable selectedItems 
 						                        identityIncludes: each ].
 			  self unselectAll.
 			  aBlock value: selectedOperations.
-			  self updateTable ] ]
+			  self updateOperations ] ]
 ]
 
 { #category : #actions }
@@ -147,9 +179,21 @@ OperationEditorPresenter >> date [
 ]
 
 { #category : #accessing }
+OperationEditorPresenter >> dateFilter [
+
+	^ dateFilter
+]
+
+{ #category : #accessing }
 OperationEditorPresenter >> destination [
 
 	^ destination
+]
+
+{ #category : #accessing }
+OperationEditorPresenter >> destinationFilter [
+
+	^ destinationFilter
 ]
 
 { #category : #actions }
@@ -179,6 +223,14 @@ OperationEditorPresenter >> fillFormWith: anOperation [
 			 ifNotNil: [ :bankName | bankName asString ])
 ]
 
+{ #category : #updating }
+OperationEditorPresenter >> filteredOperationList [
+
+	^ self operationList select: [ :each | 
+		  typeFilter selection selectedItem model = NoOperationType or: [ 
+			  typeFilter selection selectedItem model = each type ] ]
+]
+
 { #category : #initialization }
 OperationEditorPresenter >> initializePresenters [
 
@@ -186,14 +238,30 @@ OperationEditorPresenter >> initializePresenters [
 	shouldShowAmounts := false.
 	self instanciateOperationTable.
 	self instanciateOperationEditor.
+	self instanciateFilters.
 	self editDummyOperation
+]
+
+{ #category : #initialization }
+OperationEditorPresenter >> instanciateFilters [
+
+	typeFilter := self newDropList
+		              items: (AbstractOperationType possibleTypes
+				               addFirst: NoOperationType;
+				               yourself);
+		              displayIcon: [ :eachType | eachType icon ].
+	dateFilter := self newTextInput editable: false.
+	sourceFilter := self newTextInput editable: false.
+	amountFilter := self newTextInput editable: false.
+	destinationFilter := self newTextInput editable: false.
+	bankFilter := self newTextInput editable: false
 ]
 
 { #category : #initialization }
 OperationEditorPresenter >> instanciateOperationEditor [
 
 	type := self newDropList
-		        items: OperationType possibleTypes;
+		        items: AbstractOperationType possibleTypes;
 		        displayIcon: [ :eachType | eachType icon ].
 	source := self newTextInput placeholder: 'Source'.
 	date := self newTextInput placeholder: 'Date'.
@@ -298,6 +366,12 @@ OperationEditorPresenter >> operationsTable [
 OperationEditorPresenter >> presenters [
 
 	^ { 
+		  destinationFilter.
+		  sourceFilter.
+		  destinationFilter.
+		  amountFilter.
+		  dateFilter.
+		  typeFilter.
 		  operationsTable.
 		  destination.
 		  source.
@@ -346,6 +420,12 @@ OperationEditorPresenter >> selectItems: aCollection [
 ]
 
 { #category : #initialization }
+OperationEditorPresenter >> selectedOperations [
+
+	^ operationsTable selection selectedItems
+]
+
+{ #category : #initialization }
 OperationEditorPresenter >> setAccounter: anAccounter [
 
 	anAccounter == accounter ifTrue: [ ^ self ].
@@ -366,7 +446,14 @@ OperationEditorPresenter >> shouldShowAmounts [
 OperationEditorPresenter >> shouldShowAmounts: anObject [
 
 	shouldShowAmounts := anObject.
-	self updateTable
+	self updateOperations.
+	self updateSum
+]
+
+{ #category : #updating }
+OperationEditorPresenter >> sortedFilteredOperations [
+
+	^ self filteredOperationList copy reversed sorted: [ :a :b | a date < b date ]
 ]
 
 { #category : #updating }
@@ -381,6 +468,12 @@ OperationEditorPresenter >> source [
 	^ source
 ]
 
+{ #category : #accessing }
+OperationEditorPresenter >> sourceFilter [
+
+	^ sourceFilter
+]
+
 { #category : #actions }
 OperationEditorPresenter >> submitEditedOperationClearingForm: shouldClearForm [
 
@@ -389,7 +482,7 @@ OperationEditorPresenter >> submitEditedOperationClearingForm: shouldClearForm [
 	type selectedItem bankFieldOptional ifTrue: [ bank clearContent ].
 	self submitEditedOperationInto: operationBeingEdited.
 	self addOperation: operationBeingEdited.
-	self updateTable.
+	self updateOperations.
 	self selectItems: { operationBeingEdited }.
 	self editOperation: (shouldClearForm
 			 ifFalse: [ operationBeingEdited ]
@@ -417,6 +510,12 @@ OperationEditorPresenter >> type [
 	^ type
 ]
 
+{ #category : #accessing }
+OperationEditorPresenter >> typeFilter [
+
+	^ typeFilter
+]
+
 { #category : #actions }
 OperationEditorPresenter >> unselectAll [
 
@@ -428,7 +527,7 @@ OperationEditorPresenter >> unselectAll [
 OperationEditorPresenter >> update [
 
 	super update.
-	self updateTable
+	self updateOperations
 ]
 
 { #category : #updating }
@@ -438,10 +537,31 @@ OperationEditorPresenter >> update: aSymbol [
 ]
 
 { #category : #updating }
-OperationEditorPresenter >> updateTable [
+OperationEditorPresenter >> updateFilteredOperations [
 
-	operationsTable model collection: self sortedOperations.
+	operationsTable model collection: self sortedFilteredOperations.
 	operationsTable refresh
+]
+
+{ #category : #updating }
+OperationEditorPresenter >> updateOperations [
+
+	self updateFilteredOperations
+]
+
+{ #category : #initialization }
+OperationEditorPresenter >> updateSum [
+
+	amountFilter text:
+		(self selectedOperations ifEmpty: [ '' ] ifNotEmpty: [ 
+			 shouldShowAmounts
+				 ifFalse: [ '***' ]
+				 ifTrue: [ 
+					 | storage |
+					 storage := IncomeCollection new.
+					 self selectedOperations do: [ :each | 
+						 storage addIncome: each amount on: each date ].
+					 storage roundedTotalValuation asString ] ])
 ]
 
 { #category : #query }

@@ -51,7 +51,10 @@ BankCapitalDiagram >> build [
 			ifFalse: [ '' ] ].
 
 	pie build.
-	pie canvas when: RSExtentChangedEvent do: [ pie canvas zoomToFit ].
+	pie canvas
+		when: RSExtentChangedEvent
+		do: [ pie canvas zoomToFit ]
+		for: self.
 	pie shapes @ (RSPopup text: [ :obj | 
 		 | proportion |
 		 proportion := (obj value * 100 / pie totalSum) rounded.
@@ -133,7 +136,7 @@ BankCapitalDiagram >> initialize [
 	shouldShowAmounts := false.
 	canvas := RSCanvas new.
 
-	canvas when: RSExtentChangedEvent do: [ canvas zoomToFit ]
+	canvas when: RSExtentChangedEvent do: [ canvas zoomToFit ] for: self
 ]
 
 { #category : #initialization }

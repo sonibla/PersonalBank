@@ -45,6 +45,16 @@ MoneyStorage >> isEmpty [
 ]
 
 { #category : #accessing }
+MoneyStorage >> roundedTotalValuation [
+
+	| rounded |
+	rounded := (self totalValuation) asFloat round: 2.
+	^ rounded = rounded asInteger
+		  ifTrue: [ rounded asInteger ]
+		  ifFalse: [ rounded ]
+]
+
+{ #category : #accessing }
 MoneyStorage >> roundedValuationOn: aDate [
 
 	| rounded |
@@ -62,6 +72,12 @@ MoneyStorage >> send: aNumber to: aContainer on: aDate [
 		  from: self
 		  to: aContainer
 		  on: aDate
+]
+
+{ #category : #accessing }
+MoneyStorage >> totalValuation [
+
+	self subclassResponsibility
 ]
 
 { #category : #accessing }

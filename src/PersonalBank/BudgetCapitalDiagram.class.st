@@ -112,7 +112,7 @@ BudgetCapitalDiagram >> initialize [
 	shouldShowAmounts := false.
 	canvas := RSCanvas new.
 
-	canvas when: RSExtentChangedEvent do: [ canvas zoomToFit ]
+	canvas when: RSExtentChangedEvent do: [ canvas zoomToFit ] for: self
 ]
 
 { #category : #query }
@@ -274,21 +274,27 @@ BudgetCapitalDiagram >> rebuildPie [
 { #category : #utilities }
 BudgetCapitalDiagram >> registerMouseEventsOnPie [
 
-	pie shapes , outerPie shapes when: RSMouseLeftClick do: [ :evt | 
-		| containersToDisplay |
-		containersToDisplay := self containersToDisplayFromBudgets:
-			                       evt shape model.
-		containersToDisplay ifNotEmpty: [ 
+	pie shapes , outerPie shapes
+		when: RSMouseLeftClick
+		do: [ :evt | 
+			| containersToDisplay |
+			containersToDisplay := self containersToDisplayFromBudgets:
+				                       evt shape model.
+			containersToDisplay ifNotEmpty: [ 
+				subContainersToDisplay removeAll.
+				subContainersToDisplay addAll: containersToDisplay.
+				containerBeingInspected := evt shape model ].
+			self rebuildPie ]
+		for: self.
+	pie shapes , outerPie shapes
+		when: RSMouseRightClick
+		do: [ :evt | 
 			subContainersToDisplay removeAll.
-			subContainersToDisplay addAll: containersToDisplay.
-			containerBeingInspected := evt shape model ].
-		self rebuildPie ].
-	pie shapes , outerPie shapes when: RSMouseRightClick do: [ :evt | 
-		subContainersToDisplay removeAll.
-		subContainersToDisplay addAll:
-			(self containersToDisplayFromBudgets: original).
-		containerBeingInspected := original.
-		self rebuildPie ]
+			subContainersToDisplay addAll:
+				(self containersToDisplayFromBudgets: original).
+			containerBeingInspected := original.
+			self rebuildPie ]
+		for: self
 ]
 
 { #category : #accessing }

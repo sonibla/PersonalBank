@@ -225,12 +225,18 @@ AccounterProcessor >> registerIncome: anOperation [
 { #category : #processing }
 AccounterProcessor >> registerOutcome: anOperation [
 
+	| candidates selectedCandidate |
 	(banks subcontainerNamed: anOperation bank)
 		addOutcome: anOperation amount
 		on: anOperation date.
-	(budgets recursiveSubcontainerNamed: anOperation source)
-		addOutcome: anOperation amount
-		on: anOperation date
+	candidates := budgets recursiveSubcontainersNamed: anOperation source.
+	selectedCandidate := candidates size = 1
+		                     ifTrue: [ candidates anyOne ]
+		                     ifFalse: [ 
+			                     self uniqueElementOf:
+				                     (candidates reject: [ :each | 
+					                      (each valuationOn: anOperation date) isZero ]) ].
+	selectedCandidate addOutcome: anOperation amount on: anOperation date
 ]
 
 { #category : #initialization }
@@ -247,6 +253,14 @@ AccounterProcessor >> setAccounter: anAccounter [
 AccounterProcessor >> sortedOperations [
 
 	^ self class sortedOperationsFromAccounter: accounter
+]
+
+{ #category : #processing }
+AccounterProcessor >> uniqueElementOf: aCollection [
+
+	aCollection size > 1 ifTrue: [ self error: 'Ambiguous' ].
+	aCollection isEmpty ifTrue: [ self error: 'Empty' ].
+	^ aCollection anyOne
 ]
 
 { #category : #updating }

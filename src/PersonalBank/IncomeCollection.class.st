@@ -23,6 +23,12 @@ IncomeCollection >> addOutcome: aNumber on: aDate [
 		  ifFalse: [ 0 ]
 ]
 
+{ #category : #accessing }
+IncomeCollection >> allIncomes [
+
+	^ incomes
+]
+
 { #category : #adding }
 IncomeCollection >> basicAddIncome: aNumber on: aDate [
 
@@ -70,6 +76,12 @@ IncomeCollection >> initialize [
 IncomeCollection >> isEmpty [
 
 	^ incomes isEmpty
+]
+
+{ #category : #accessing }
+IncomeCollection >> totalValuation [
+
+	^ self allIncomes sum: [ :eachIncome | eachIncome amount ]
 ]
 
 { #category : #accessing }

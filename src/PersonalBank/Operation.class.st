@@ -112,7 +112,7 @@ Operation >> makesSense [
 			  source isString and: [ 
 				  destination notEmpty and: [ 
 					  source notEmpty and: [ 
-						  (OperationType possibleTypes includes: type) and: [ 
+						  (AbstractOperationType possibleTypes includes: type) and: [ 
 							  date class = Date and: [ 
 								  type bankFieldOptional or: [ 
 									  bank isString and: [ bank notEmpty ] ] ] ] ] ] ] ] ]

@@ -1,6 +1,6 @@
 Class {
 	#name : #OperationType,
-	#superclass : #Object,
+	#superclass : #AbstractOperationType,
 	#category : #'PersonalBank-Core'
 }
 
@@ -14,24 +14,6 @@ OperationType class >> bankFieldOptional [
 OperationType class >> fromJsonId: aString [
 
 	^ self possibleTypes detect: [ :each | each jsonId = aString ]
-]
-
-{ #category : #accessing }
-OperationType class >> icon [
-
-	^ Smalltalk ui theme iconNamed: self iconName
-]
-
-{ #category : #accessing }
-OperationType class >> iconName [
-
-	self subclassResponsibility
-]
-
-{ #category : #accessing }
-OperationType class >> isAbstract [
-
-	^ true
 ]
 
 { #category : #testing }
@@ -90,10 +72,4 @@ OperationType class >> on: aDate from: source to: destination of: amount [
 		  destination: destination;
 		  amount: amount;
 		  yourself
-]
-
-{ #category : #accessing }
-OperationType class >> possibleTypes [
-
-	^ self allSubclasses reject: [ :each | each isAbstract ]
 ]
